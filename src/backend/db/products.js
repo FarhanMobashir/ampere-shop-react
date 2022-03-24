@@ -5,26 +5,60 @@ import { v4 as uuid } from "uuid";
  * You can add products of your wish with different attributes
  * */
 
+/*
+  * Product Database
+  the product will be of jeans type
+  * */
+
 export const products = [
   {
     _id: uuid(),
-    title: "You Can WIN",
-    author: "Shiv Khera",
-    price: "5000",
-    categoryName: "non-fiction",
+    name: "Roadster Jeans Men",
+    categoryName: "men",
+    price: "120",
+    rating: "3.2",
+    discountPercent: "10",
+    tag: "NEW",
+    imageUrl: "https://via.placeholder.com/500",
   },
   {
     _id: uuid(),
-    title: "You are Winner",
-    author: "Junaid Qureshi",
-    price: "3000",
-    categoryName: "horror",
+    name: "Roadster Jeans Women",
+    categoryName: "women",
+    price: "120",
+    rating: "3.2",
+    discountPercent: "10",
+    tag: "NEW",
+    imageUrl: "https://via.placeholder.com/150",
   },
   {
     _id: uuid(),
-    title: "Think and Grow Rich",
-    author: "Shiv Khera",
-    price: "1000",
-    categoryName: "fiction",
+    name: "Roadster Jeans Kids",
+    categoryName: "kids",
+    price: "120",
+    rating: "3.2",
+    discountPercent: "10",
+    tag: "TRENDING",
+    imageUrl: "https://via.placeholder.com/150",
+  },
+  {
+    _id: uuid(),
+    name: "Roadster Jeans Girls",
+    categoryName: "girls",
+    price: "120",
+    rating: "3.2",
+    discountPercent: "10",
+    tag: "NEW",
+    imageUrl: "https://via.placeholder.com/150",
+  },
+  {
+    _id: uuid(),
+    name: "Roadster Jeans Boys",
+    categoryName: "boys",
+    price: "120",
+    rating: "3.2",
+    discountPercent: "10",
+    tag: "NEW",
+    imageUrl: "https://via.placeholder.com/150",
   },
 ];
