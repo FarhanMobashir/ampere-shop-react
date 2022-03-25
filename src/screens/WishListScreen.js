@@ -1,6 +1,5 @@
 import React from "react";
 import { ProductCard } from "../components/ProductCard";
-
 export const WishlistScreen = () => {
   return (
     <div id="wishlist-main-container">
