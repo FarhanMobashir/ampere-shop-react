@@ -1,14 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
+import "./global.css";
 import { makeServer } from "./server";
+import { BrowserRouter as Router } from "react-router-dom";
 
 // Call make Server
 makeServer();
 
 ReactDOM.render(
-  <React.StrictMode>
+  <Router>
     <App />
-  </React.StrictMode>,
+  </Router>,
   document.getElementById("root")
 );
