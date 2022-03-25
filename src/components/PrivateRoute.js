@@ -1,27 +1,15 @@
 import React from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, Route } from "react-router-dom";
+import { AuthContext } from "../contexts/AuthContex";
 
-const isAuthenticated = (key) => {
-  return localStorage.getItem(key) !== null;
-};
-
-export const PrivateRoute = ({ component: Component, ...rest }) => {
+export const PrivateRoute = ({ children }) => {
+  const { isAuthenticated } = React.useContext(AuthContext);
   let location = useLocation();
-  return (
-    <Route
-      {...rest}
-      render={(props) =>
-        isAuthenticated("ampereshop-token") ? (
-          <Component {...props} />
-        ) : (
-          <Navigate
-            to={{
-              pathname: "/auth",
-              state: { from: location },
-            }}
-          />
-        )
-      }
-    />
-  );
+
+  if (!isAuthenticated()) {
+    console.log("isAuthenticated: ", isAuthenticated());
+    return <Navigate to="/auth" state={{ from: location }} />;
+  } else {
+    return children;
+  }
 };

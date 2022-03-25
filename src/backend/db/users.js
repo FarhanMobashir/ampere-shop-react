@@ -17,3 +17,8 @@ export const users = [
     updatedAt: formatDate(),
   },
 ];
+
+// {
+// "email" : "a@b.com",
+// "password" : "1234"
+// }
