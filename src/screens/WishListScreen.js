@@ -13,7 +13,7 @@ export const WishlistScreen = () => {
           return (
             <ProductCard
               key={item}
-              prodcutName="Product Name"
+              productName="Product Name Goes Here"
               categoryName="Category Name"
               price="$100"
               cutoutPrice="$190"
