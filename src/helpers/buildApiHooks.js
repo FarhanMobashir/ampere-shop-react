@@ -97,35 +97,32 @@ export const buildHooks = (queryArray, baseQuery, dispatchFn) => {
       return { ...state };
     };
 
-    const useMutation = (urlParams = "") => {
+    let useMutation = (urlParams = "") => {
       const [loading, setLoading] = React.useState(false);
       const [error, setError] = React.useState(false);
       const [data, setData] = React.useState([]);
 
-      const mutationCallBack = React.useCallback(
-        (body = {}, urlParams = "") => {
-          setLoading(true);
-          baseQuery(`${item.query}/${urlParams}`, {
-            method: item.method,
-            body: JSON.stringify(body),
+      let mutationCallBack = React.useCallback((body = {}, urlParams = "") => {
+        setLoading(true);
+        baseQuery(`${item.query}/${urlParams}`, {
+          method: item.method,
+          body: JSON.stringify(body),
+        })
+          .then((res) => {
+            console.log(res);
+            return res.json();
           })
-            .then((res) => {
-              console.log(res);
-              return res.json();
-            })
-            .then((data) => {
-              setData(data);
-              setLoading(false);
-              enhancedispatch(dispatchFn, data, item);
-            })
-            .catch((err) => {
-              setLoading(false);
-              console.log(err);
-              setError(err);
-            });
-        },
-        []
-      );
+          .then((data) => {
+            setData(data);
+            setLoading(false);
+            enhancedispatch(dispatchFn, data, item);
+          })
+          .catch((err) => {
+            setLoading(false);
+            console.log(err);
+            setError(err);
+          });
+      }, []);
 
       return [
         mutationCallBack,

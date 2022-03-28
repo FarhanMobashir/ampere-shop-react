@@ -96,7 +96,8 @@ export const ApiProvider = ({ children }) => {
     fetchBaseQuery({
       baseUrl: "http://localhost:3000/api",
       headers: headers,
-    })
+    }),
+    dataProviderDispatch
   );
 
   const value = React.useMemo(() => {
