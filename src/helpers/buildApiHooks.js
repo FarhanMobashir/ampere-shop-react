@@ -14,14 +14,16 @@ export const buildHooks = (queryArray, baseQuery) => {
   queryArray.forEach((item) => {
     let hookName = `use${item.name}`;
 
-    let useQuery = () => {
+    let useQuery = (urlParams = "") => {
       const [loading, setLoading] = React.useState(true);
       const [error, setError] = React.useState(false);
-      const [data, setData] = React.useState([]);
+      const [data, setData] = React.useState(null);
       React.useEffect(() => {
+        console.log("useQuery: ", item.name);
         setLoading(true);
-        baseQuery(item.query)
+        baseQuery(`${item.query}/${urlParams}`)
           .then((res) => {
+            console.log(res);
             return res.json();
           })
           .then((data) => {
@@ -33,37 +35,38 @@ export const buildHooks = (queryArray, baseQuery) => {
             setError(err);
           });
       }, []);
+
       return { loading, error, data };
     };
 
-    const useMutation = () => {
-      const [loading, setLoading] = React.useState(true);
+    const useMutation = (urlParams = "") => {
+      const [loading, setLoading] = React.useState(false);
       const [error, setError] = React.useState(false);
       const [data, setData] = React.useState([]);
 
-      const mutationCallBack = function (body = {}) {
-        return baseQuery(item.query, {
-          method: item.method,
-          body: JSON.stringify(body),
-        })
-          .then((res) => {
-            setLoading(true);
-            return res.json();
+      const mutationCallBack = React.useCallback(
+        (body = {}, urlParams = "") => {
+          setLoading(true);
+          baseQuery(`${item.query}/${urlParams}`, {
+            method: item.method,
+            body: JSON.stringify(body),
           })
-          .then((data) => {
-            setData(data);
-            setLoading(false);
-          })
-          .catch((err) => {
-            setLoading(false);
-            console.log(err);
-            setError(err);
-          });
-      };
-
-      React.useEffect(() => {
-        mutationCallback();
-      }, [loading, error]);
+            .then((res) => {
+              console.log(res);
+              return res.json();
+            })
+            .then((data) => {
+              setData(data);
+              setLoading(false);
+            })
+            .catch((err) => {
+              setLoading(false);
+              console.log(err);
+              setError(err);
+            });
+        },
+        []
+      );
 
       return [
         mutationCallBack,
@@ -76,10 +79,8 @@ export const buildHooks = (queryArray, baseQuery) => {
     };
 
     if (item.type === "query") {
-      console.log("hello from query");
       hooks[hookName] = useQuery;
     } else if (item.type === "mutation") {
-      console.log("hello from mutation");
       hooks[hookName] = useMutation;
     }
     // hooks[hookName] = makeHook;

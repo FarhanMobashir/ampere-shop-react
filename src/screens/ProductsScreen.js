@@ -2,23 +2,17 @@ import React from "react";
 import { RadioButton } from "../components/RadioButton";
 import { ProductCard } from "../components/ProductCard";
 import { useApi } from "../contexts/ApiContext";
+import { useNavigate } from "react-router-dom";
 
 export const ProductsScreen = () => {
-  // const [, setProductData] = React.useState([]);
-  // const [categories, setCategories] = React.useState([]);
+  const navigate = useNavigate();
+
   const { useallProducts, useallCategories, useaddToWishlist } = useApi();
   const { data: productData, loading: productIsLoading } = useallProducts();
   const { data: categoryData, loading: categoriesIsLoading } =
     useallCategories();
   const [addToWishlist, { loading: isAddingToWishList, data: wishListData }] =
     useaddToWishlist();
-
-  function addToWishlistHandler(product) {
-    addToWishlist(product);
-    // if (!isAddingToWishList) {
-    //   alert("Product added to wishlist!");
-    // }
-  }
 
   return (
     <div id="product-screen-container">
@@ -102,7 +96,7 @@ export const ProductsScreen = () => {
           </small>
         </div>
         <div className="product-listing-container">
-          {productIsLoading ? (
+          {productIsLoading || isAddingToWishList ? (
             <h1>loading...</h1>
           ) : (
             productData.products.map((item) => {
@@ -119,10 +113,12 @@ export const ProductsScreen = () => {
                   imageUrl={item.imageUrl}
                   discountPillText={`${item.discountPercent}%`}
                   offerPillText={item.tag}
-                  onActionButtonClick={() => console.log("add to cart clicked")}
-                  onIconClick={() => addToWishlistHandler(item)}
-                  actionButtonText="Add to Cart"
+                  onActionButtonClick={() => navigate(`/products/${item._id}`)}
+                  onIconClick={() => addToWishlist(item)}
+                  actionButtonText={"Add To Cart"}
                   isWishlisted={item % 2 === 0 ? true : false}
+                  isLoading={isAddingToWishList}
+                  loadingText={"Adding to wishlist..."}
                 />
               );
             })

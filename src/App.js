@@ -9,6 +9,7 @@ import Mockman from "mockman-js";
 import { AuthProvider } from "./contexts/AuthContex";
 import { PrivateRoute } from "./components/PrivateRoute";
 import { ApiProvider } from "./contexts/ApiContext";
+import { SingleProduct } from "./components/SingleProduct";
 
 function App() {
   return (
@@ -21,6 +22,8 @@ function App() {
             <Route path="/mock" element={<Mockman />} />
             <Route path="/auth" element={<AuthScreen />} />
             <Route path="/products" element={<ProductsScreen />} />
+            <Route path="/products/:productId" element={<SingleProduct />} />
+
             {/* private routes  */}
             <Route path="/user">
               <Route
