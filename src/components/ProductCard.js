@@ -39,7 +39,7 @@ export const ProductCard = ({
         )}
       </div>
       <div className="content-container-small">
-        <h2 className="card-title-small">{productName}</h2>
+        <h2 className="card-title-small">{`${productName.slice(0, 16)}...`}</h2>
         <h4 className="card-subtitle-small">{categoryName}</h4>
         <div className="bottom-container">
           <div className="price-container">

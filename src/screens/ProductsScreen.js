@@ -1,25 +1,18 @@
 import React from "react";
 import { RadioButton } from "../components/RadioButton";
 import { ProductCard } from "../components/ProductCard";
+import { useApi } from "../contexts/ApiContext";
+import { useNavigate } from "react-router-dom";
 
 export const ProductsScreen = () => {
-    const [productData, setProductData] = React.useState([]);
-    const [categories, setCategories] = React.useState([]);
-    React.useEffect(() => {
-        fetch("http://localhost:3000/api/products")
-            .then((res) => res.json())
-            .then((data) => {
-                setProductData(data.products);
-            });
-        
-            fetch("http://localhost:3000/api/categories")
-            .then((res) => res.json())
-            .then((data) => {
-                setCategories(data.categories);
-            }
-            );
-            
-    }, []);
+  const navigate = useNavigate();
+
+  const { useallProducts, useallCategories, useaddToWishlist } = useApi();
+  const { data: productData, loading: productIsLoading } = useallProducts();
+  const { data: categoryData, loading: categoriesIsLoading } =
+    useallCategories();
+  const [addToWishlist, { loading: isAddingToWishList, data: wishListData }] =
+    useaddToWishlist();
 
   return (
     <div id="product-screen-container">
@@ -32,19 +25,23 @@ export const ProductsScreen = () => {
           <form action="" className="form-group">
             <div className="radio-checkbox-container">
               <h5 className="form-group-heading">Category</h5>
-              {categories.map((item) => {
-                return (
-                  <RadioButton
-                    key={item.id}
-                    label={item.categoryName.toUpperCase()}
-                    value={item.categoryName}
-                    name="category"
-                    onChange={(e) =>
-                      console.log(e.target.value, e.target.checked)
-                    }
-                  />
-                );
-              })}
+              {categoriesIsLoading ? (
+                <h1>loading...</h1>
+              ) : (
+                categoryData.categories.map((item) => {
+                  return (
+                    <RadioButton
+                      key={item.id}
+                      label={item.categoryName.toUpperCase()}
+                      value={item.categoryName}
+                      name="category"
+                      onChange={(e) =>
+                        console.log(e.target.value, e.target.checked)
+                      }
+                    />
+                  );
+                })
+              )}
             </div>
             {/* <div className="radio-checkbox-container">
               <h5 className="form-group-heading">Sort By</h5>
@@ -99,8 +96,10 @@ export const ProductsScreen = () => {
           </small>
         </div>
         <div className="product-listing-container">
-           {
-               productData.map((item) => {
+          {productIsLoading || isAddingToWishList ? (
+            <h1>loading...</h1>
+          ) : (
+            productData.products.map((item) => {
               return (
                 <ProductCard
                   key={item.name}
@@ -114,15 +113,16 @@ export const ProductsScreen = () => {
                   imageUrl={item.imageUrl}
                   discountPillText={`${item.discountPercent}%`}
                   offerPillText={item.tag}
-                  onActionButtonClick={() => console.log("add to cart clicked")}
-                  onIconClick={() => console.log("icon clicked")}
-                  actionButtonText="Add to Cart"
+                  onActionButtonClick={() => navigate(`/products/${item._id}`)}
+                  onIconClick={() => addToWishlist(item)}
+                  actionButtonText={"Add To Cart"}
                   isWishlisted={item % 2 === 0 ? true : false}
+                  isLoading={isAddingToWishList}
+                  loadingText={"Adding to wishlist..."}
                 />
               );
             })
-           }
-            
+          )}
         </div>
       </div>
     </div>

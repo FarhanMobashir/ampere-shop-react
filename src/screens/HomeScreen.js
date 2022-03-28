@@ -13,11 +13,6 @@ export const HomeScreen = () => {
       });
   }, []);
 
-
-
-
- 
-
   return (
     <div id="main">
       <div className="hero-section">
