@@ -1,8 +1,10 @@
+import { useApi } from "../contexts/ApiContext";
+import { useData } from "../contexts/DataContext";
 import { CustomedNavLink } from "./CustomNavLink";
 import { HeaderIcon } from "./HeaderIcon";
 import { HeaderSearch } from "./HeaderSearchBig";
-
 export const AppHeader = () => {
+  const { state } = useData();
   const activeStyleForIcons = {
     background: "none",
     textDecoration: "none",
@@ -71,7 +73,7 @@ export const AppHeader = () => {
               <HeaderIcon
                 iconName={"uil-heart"}
                 withBadge={true}
-                badgeCount={`9+`}
+                badgeCount={`${state.wishlist.length}`}
               />
             </CustomedNavLink>
             <CustomedNavLink to="/auth">

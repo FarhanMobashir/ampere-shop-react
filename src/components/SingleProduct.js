@@ -1,14 +1,15 @@
 import { useParams } from "react-router-dom";
 import { useApi } from "../contexts/ApiContext";
+import { useData } from "../contexts/DataContext";
 
 export const SingleProduct = (props) => {
   const { productId } = useParams();
-  console.log(productId);
   const { usegetSingleProduct } = useApi();
   const { loading, data } = usegetSingleProduct(productId);
-  if (!loading) {
-    console.log(data);
-  }
+  const { state } = useData();
+
+  console.log("state from reducer", state);
+
   return (
     <div>
       <h1>Single Product</h1>

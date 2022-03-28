@@ -8,7 +8,6 @@ export const WishlistScreen = () => {
     deleteFromWishlist,
     { loading: isDeletingFromWishList, data: wishListData },
   ] = usedeleteFromWishlist();
-
   return (
     <div id="wishlist-main-container">
       <div className="page-title-wrapper mv-20">

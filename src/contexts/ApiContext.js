@@ -1,14 +1,22 @@
 import React from "react";
 import { buildHooks, fetchBaseQuery } from "../helpers/buildApiHooks";
 import { AuthContext } from "./AuthContex";
+import { useData } from "./DataContext";
+
 export const ApiContext = React.createContext();
 
 export const ApiProvider = ({ children }) => {
+  const { dispatch: dataProviderDispatch } = useData();
   const { authToken } = React.useContext(AuthContext);
 
   const publicApi = buildHooks(
     [
-      { name: "allProducts", query: "/products", type: "query", method: "GET" },
+      {
+        name: "allProducts",
+        query: "/products",
+        type: "query",
+        method: "GET",
+      },
       {
         name: "getSingleProduct",
         query: "/products",
@@ -30,7 +38,8 @@ export const ApiProvider = ({ children }) => {
     ],
     fetchBaseQuery({
       baseUrl: "http://localhost:3000/api",
-    })
+    }),
+    dataProviderDispatch
   );
 
   const headers = {
@@ -90,10 +99,12 @@ export const ApiProvider = ({ children }) => {
     })
   );
 
-  const value = {
-    ...publicApi,
-    ...privateApi,
-  };
+  const value = React.useMemo(() => {
+    return {
+      ...publicApi,
+      ...privateApi,
+    };
+  }, [publicApi, privateApi]);
 
   return <ApiContext.Provider value={value}>{children}</ApiContext.Provider>;
 };

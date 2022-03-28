@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [authToken, setAuthToken] = useLocalStorage("authToken", null);
 
   const isAuthenticated = () => {
-    console.log("isAuthenticated: ", authToken);
+    // console.log("isAuthenticated: ", authToken);
     if (authToken) {
       return true;
     } else {

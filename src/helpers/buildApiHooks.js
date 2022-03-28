@@ -1,5 +1,8 @@
 import React from "react";
 
+/**
+ * This function is used to fetch the base query for the API.
+ */
 export const fetchBaseQuery = ({ baseUrl, headers }) => {
   return async (query, options) => {
     return await fetch(`${baseUrl}${query}`, {
@@ -9,34 +12,89 @@ export const fetchBaseQuery = ({ baseUrl, headers }) => {
   };
 };
 
-export const buildHooks = (queryArray, baseQuery) => {
+const enhancedispatch = (dispatch, data, item) => {
+  dispatch({ type: item.name, payload: data });
+};
+
+/**
+ * This function is used to build the API hooks.
+ * @param {Array} apiActions - The API actions.
+ * @param {Function} fetchBaseQuery - The function to fetch the base query.
+ * @returns {Object} The API hooks.
+ * @example
+ * const hooks = buildApiHooks(
+ *  [
+ *   {
+ *   name: "getWishlist",
+ *  query: "/user/wishlist",
+ * type: "query",
+ * method: "GET",
+ * },],
+ * fetchBaseQuery({
+ *  baseUrl: "http://localhost:3000/api",
+ * headers: headers,
+ * })
+ * );
+ *
+ * const { useWishlist } = hooks;
+ * */
+
+export const buildHooks = (queryArray, baseQuery, dispatchFn) => {
   const hooks = {};
   queryArray.forEach((item) => {
     let hookName = `use${item.name}`;
 
     let useQuery = (urlParams = "") => {
-      const [loading, setLoading] = React.useState(true);
-      const [error, setError] = React.useState(false);
-      const [data, setData] = React.useState(null);
+      // const [loading, setLoading] = React.useState(true);
+      // const [error, setError] = React.useState(false);
+      // const [data, setData] = React.useState(null);
+      // using the reducer pattern
+      const reducer = (state, action) => {
+        if (action.type === "IS_LOADING") {
+          return {
+            ...state,
+            loading: action.payload,
+          };
+        } else if (action.type === "HAS_ERROR") {
+          return {
+            ...state,
+            error: action.payload,
+          };
+        } else if (action.type === "HAS_DATA") {
+          return {
+            ...state,
+            data: action.payload,
+          };
+        }
+      };
+      const initialState = {
+        data: [],
+        loading: true,
+        error: false,
+      };
+      const [state, dispatch] = React.useReducer(reducer, initialState);
       React.useEffect(() => {
-        console.log("useQuery: ", item.name);
-        setLoading(true);
+        // setLoading(true);
         baseQuery(`${item.query}/${urlParams}`)
           .then((res) => {
-            console.log(res);
             return res.json();
           })
           .then((data) => {
-            setData(data);
-            setLoading(false);
+            // setData(data);
+            // setLoading(false);
+            dispatch({ type: "HAS_DATA", payload: data });
+            dispatch({ type: "IS_LOADING", payload: false });
+            enhancedispatch(dispatchFn, data, item);
           })
           .catch((err) => {
-            setLoading(false);
-            setError(err);
+            // setLoading(false);
+            // setError(err);
+            dispatch({ type: "IS_LOADING", payload: false });
+            dispatch({ type: "HAS_ERROR", payload: err });
           });
       }, []);
 
-      return { loading, error, data };
+      return { ...state };
     };
 
     const useMutation = (urlParams = "") => {
@@ -58,6 +116,7 @@ export const buildHooks = (queryArray, baseQuery) => {
             .then((data) => {
               setData(data);
               setLoading(false);
+              enhancedispatch(dispatchFn, data, item);
             })
             .catch((err) => {
               setLoading(false);
@@ -83,7 +142,6 @@ export const buildHooks = (queryArray, baseQuery) => {
     } else if (item.type === "mutation") {
       hooks[hookName] = useMutation;
     }
-    // hooks[hookName] = makeHook;
   });
   return hooks;
 };

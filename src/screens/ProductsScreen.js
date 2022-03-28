@@ -6,13 +6,32 @@ import { useNavigate } from "react-router-dom";
 
 export const ProductsScreen = () => {
   const navigate = useNavigate();
-
-  const { useallProducts, useallCategories, useaddToWishlist } = useApi();
+  const { useallProducts, useallCategories, useaddToWishlist, dispatch } =
+    useApi();
   const { data: productData, loading: productIsLoading } = useallProducts();
   const { data: categoryData, loading: categoriesIsLoading } =
     useallCategories();
   const [addToWishlist, { loading: isAddingToWishList, data: wishListData }] =
     useaddToWishlist();
+
+  // const setProductState = (dispatch) => {
+  //   dispatch({ type: "allProducts", payload: productData.products });
+  // };
+
+  // const addToWishlistUI = (dispatch) => {
+  //   dispatch({ type: "addToWishlist", payload: wishListData.wishlist });
+  // };
+
+  // if (!productIsLoading) {
+  //   setProductState(dispatch);
+  // }
+
+  const addToWishlistHandler = (product) => {
+    addToWishlist(product);
+  };
+  // if (!isAddingToWishList) {
+  //   addToWishlistUI(dispatch);
+  // }
 
   return (
     <div id="product-screen-container">
@@ -96,7 +115,7 @@ export const ProductsScreen = () => {
           </small>
         </div>
         <div className="product-listing-container">
-          {productIsLoading || isAddingToWishList ? (
+          {productIsLoading ? (
             <h1>loading...</h1>
           ) : (
             productData.products.map((item) => {
@@ -114,7 +133,7 @@ export const ProductsScreen = () => {
                   discountPillText={`${item.discountPercent}%`}
                   offerPillText={item.tag}
                   onActionButtonClick={() => navigate(`/products/${item._id}`)}
-                  onIconClick={() => addToWishlist(item)}
+                  onIconClick={() => addToWishlistHandler(item)}
                   actionButtonText={"Add To Cart"}
                   isWishlisted={item % 2 === 0 ? true : false}
                   isLoading={isAddingToWishList}
