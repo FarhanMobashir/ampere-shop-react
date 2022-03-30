@@ -4,63 +4,53 @@ import React from "react";
 
 const initialState = {
   products: [],
+  productForUi: [],
   cart: [],
   categories: [],
-  cartTotal: 0,
   wishlist: [],
 };
 
 const reducer = produce((state = initialState, action) => {
+  //* products actions
   if (action.type === "allProducts") {
     state.products = action.payload.products;
+    state.productForUi = action.payload.products;
   }
-  if (action.type === "addToWishlist") {
-    state.wishlist = action.payload.wishlist;
-  }
-
+  // * categories actions
   if (action.type === "allCategories") {
     state.categories = action.payload.categories;
   }
-
+  // * wishlist actions
   if (action.type === "getWishlist") {
     state.wishlist = action.payload.wishlist;
   }
 
-  // if (action.type === "FETCH_PRODUCTS") {
-  //   return (state.products = action.payload);
-  // }
-  // if (action.type === "FETCH_CATEGORIES") {
-  //   return (state.categories = action.payload);
-  // }
-  // if (action.type === "FETCH_CART") {
-  //   return (state.cart = action.payload);
-  // }
-  // if (action.type === "FETCH_CART_TOTAL") {
-  //   return (state.cartTotal = action.payload);
-  // }
-  // if (action.type === "FETCH_WISHLIST") {
-  //   return (state.wishlist = action.payload);
-  // }
+  if (action.type === "addToWishlist") {
+    state.wishlist = action.payload.wishlist;
+  }
 
-  // if (action.type === "ADD_TO_CART") {
-  //   return (state.cart = [...state.cart, action.payload]);
-  // }
-  // if (action.type === "REMOVE_FROM_CART") {
-  //   return (state.cart = state.cart.filter(
-  //     (item) => item.id !== action.payload
-  //   ));
-  // }
-  // if (action.type === "ADD_TO_WISHLIST") {
-  //   return (state.wishlist = [...state.wishlist, action.payload]);
-  // }
-  // if (action.type === "REMOVE_FROM_WISHLIST") {
-  //   return (state.wishlist = state.wishlist.filter(
-  //     (item) => item.id !== action.payload
-  //   ));
-  // }
+  if (action.type === "deleteFromWishlist") {
+    state.wishlist = action.payload.wishlist;
+  }
+  // * cart actions
+  if (action.type === "getCart") {
+    state.cart = action.payload.cart;
+  }
+
+  if (action.type === "addToCart") {
+    state.cart = action.payload.cart;
+  }
+
+  if (action.type === "deleteFromCart") {
+    state.cart = action.payload.cart;
+  }
+  if (action.type === "updateCart") {
+    state.cart = action.payload.cart;
+  }
 }, initialState);
 
 export const DataContext = React.createContext();
+DataContext.displayName = "DataContext";
 
 export const DataProvider = ({ children }) => {
   const [state, dispatch] = useThunkReducer(reducer, initialState);

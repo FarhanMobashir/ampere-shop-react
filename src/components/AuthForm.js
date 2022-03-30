@@ -60,10 +60,17 @@ export const Form = ({ onSubmit, name }) => {
 export const AuthForm = ({}) => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [name, setName] = React.useState("");
   const onLogin = useToggle(false);
   const navigate = useNavigate();
 
   const { login } = React.useContext(AuthContext);
+
+  const guestLoginCredential = {
+    email: "adarshbalika@gmail.com",
+    password: "adarshbalika",
+  };
 
   function signUp(e) {
     e.preventDefault();
@@ -76,6 +83,13 @@ export const AuthForm = ({}) => {
   function logIn(e) {
     e.preventDefault();
     axios.post("/api/auth/login", { email, password }).then((res) => {
+      login(res.data.encodedToken);
+      navigate("/");
+    });
+  }
+
+  function guestLogin(e) {
+    axios.post("/api/auth/login", guestLoginCredential).then((res) => {
       login(res.data.encodedToken);
       navigate("/");
     });
@@ -124,6 +138,24 @@ export const AuthForm = ({}) => {
             htmlFor="password"
             onChange={(e) => setPassword(e.target.value)}
           />
+          {onLogin.on ? (
+            <>
+              <Input
+                label="Confirm Password"
+                required={false}
+                type="password"
+                htmlFor="password"
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+              <Input
+                label="Name"
+                required={false}
+                type="name"
+                htmlFor="name"
+                onChange={(e) => setName(e.target.value)}
+              />
+            </>
+          ) : null}
           <div className="flex-between-container">
             <Checkbox
               label="Remember me"
@@ -140,6 +172,14 @@ export const AuthForm = ({}) => {
             >
               {onLogin.on ? "SIGN UP" : "LOGIN"}
             </button>
+            {!onLogin.on ? (
+              <button
+                onClick={() => guestLogin()}
+                className="btn btn-primary btn-sm purple mt-20 wp-100"
+              >
+                LOGIN AS GUEST
+              </button>
+            ) : null}
           </div>
         </form>
       </div>

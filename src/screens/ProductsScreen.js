@@ -3,122 +3,162 @@ import { RadioButton } from "../components/RadioButton";
 import { ProductCard } from "../components/ProductCard";
 import { useApi } from "../contexts/ApiContext";
 import { useNavigate } from "react-router-dom";
+import { useData } from "../contexts/DataContext";
+import { Checkbox } from "../components/Checkbox";
+import { Slider } from "../components/Slider";
 
 export const ProductsScreen = () => {
   const navigate = useNavigate();
-  const { useallProducts, useallCategories, useaddToWishlist, dispatch } =
+  const { useallProducts, useallCategories, useaddToWishlist, useaddToCart } =
     useApi();
+
   const { data: productData, loading: productIsLoading } = useallProducts();
+
   const { data: categoryData, loading: categoriesIsLoading } =
     useallCategories();
+
   const [addToWishlist, { loading: isAddingToWishList, data: wishListData }] =
     useaddToWishlist();
 
-  // const setProductState = (dispatch) => {
-  //   dispatch({ type: "allProducts", payload: productData.products });
-  // };
+  const [addToCart, { loading: isAddingToCart, data: cartData }] =
+    useaddToCart();
 
-  // const addToWishlistUI = (dispatch) => {
-  //   dispatch({ type: "addToWishlist", payload: wishListData.wishlist });
-  // };
-
-  // if (!productIsLoading) {
-  //   setProductState(dispatch);
-  // }
+  const { state: globalState, dispatch: globalDispatch } = useData();
+  // * local states
+  const [sortCategory, setSortCategory] = React.useState([]);
+  const [sortByPrice, setSortByPrice] = React.useState("");
+  const [rating, setRating] = React.useState(0);
 
   const addToWishlistHandler = (product) => {
     addToWishlist(product);
   };
-  // if (!isAddingToWishList) {
-  //   addToWishlistUI(dispatch);
-  // }
+
+  let filteredData = [];
+  if (productData && categoryData) {
+    ///* sort by category
+    filteredData = productData.products
+      .filter((product) => {
+        if (sortCategory.length === 0) {
+          return product;
+        } else {
+          return sortCategory.includes(product.categoryName);
+        }
+      })
+      // * sort by price
+      .sort((a, b) => {
+        if (sortByPrice === "") {
+          return a.price - b.price;
+        } else if (sortByPrice === "lowToHigh") {
+          return a.price - b.price;
+        } else if (sortByPrice === "highToLow") {
+          return b.price - a.price;
+        }
+      })
+      // * sort by rating
+      .filter((product) => {
+        if (rating === 0) {
+          return product;
+        } else {
+          return product.rating >= rating;
+        }
+      });
+  }
+
+  const setSortCategoryHandler = (e) => {
+    console.log(e.target.value, e.target.checked);
+    const checkInclude = sortCategory.includes(e.target.value);
+    const checkValue = e.target.value;
+    const checkChecked = e.target.checked;
+    if (checkInclude && checkChecked) {
+      return;
+    } else if (!checkInclude && checkChecked) {
+      setSortCategory([...sortCategory, checkValue]);
+    } else if (checkInclude && !checkChecked) {
+      setSortCategory(
+        sortCategory.filter((category) => category !== checkValue)
+      );
+    }
+    console.log(sortCategory);
+  };
 
   return (
     <div id="product-screen-container">
-      <div className="filter-container">
+      <form className="filter-container" name="filter-form">
         <div className="flex-between-container">
           <h1 className="h4 black-6">Filters</h1>
-          <h5 className="tx-underline tx-14 black-4 pointer">Clear</h5>
+          <input
+            className="btn btn-primary btn-sm red"
+            type="reset"
+            value="Clear"
+            onClick={() => {
+              setSortCategory([]);
+              setSortByPrice("");
+              setRating(0);
+            }}
+          />
         </div>
         <div className="filter-box">
-          <form action="" className="form-group">
+          <div action="" className="form-group">
             <div className="radio-checkbox-container">
               <h5 className="form-group-heading">Category</h5>
               {categoriesIsLoading ? (
                 <h1>loading...</h1>
               ) : (
-                categoryData.categories.map((item) => {
+                globalState.categories.map((item) => {
                   return (
-                    <RadioButton
+                    <Checkbox
                       key={item.id}
                       label={item.categoryName.toUpperCase()}
                       value={item.categoryName}
                       name="category"
-                      onChange={(e) =>
-                        console.log(e.target.value, e.target.checked)
-                      }
+                      onChange={setSortCategoryHandler}
                     />
                   );
                 })
               )}
             </div>
-            {/* <div className="radio-checkbox-container">
-              <h5 className="form-group-heading">Sort By</h5>
-
-              <Checkbox
-                label="Price"
-                value="price"
+            <div className="radio-checkbox-container">
+              <h5 className="form-group-heading">Sort By Price</h5>
+              <RadioButton
+                label="High to Low"
+                value="highToLow"
                 name="sortBy"
-                onChange={() => console.log("Heelo")}
+                onChange={(e) => setSortByPrice(e.target.value)}
               />
-              <Checkbox
-                label="Discount"
-                value="discount"
+              <RadioButton
+                label="Low to High"
+                value="lowToHigh"
                 name="sortBy"
-                onChange={() => console.log("Heelo")}
-              />
-              <Checkbox
-                label="New Arrivals"
-                value="newArrivals"
-                name="sortBy"
-                onChange={() => console.log("Heelo")}
+                onChange={(e) => setSortByPrice(e.target.value)}
               />
             </div>
             <div className="radio-checkbox-container">
               <h5 className="form-group-heading">Rating</h5>
-              <Checkbox
-                label="1-star"
-                value="1"
-                name="rating"
-                onChange={() => console.log("Heelo")}
+              <Slider
+                min={0}
+                max={5}
+                rangeValue={rating}
+                onChange={(e) => {
+                  setRating(e.target.value);
+                  console.log(e.target.value);
+                }}
               />
-              <Checkbox
-                label="3-star"
-                value="3"
-                name="rating"
-                onChange={() => console.log("Heelo")}
-              />
-              <Checkbox
-                label="5-star"
-                value="5"
-                name="rating"
-                onChange={() => console.log("Heelo")}
-              />
-            </div> */}
-          </form>
+            </div>
+          </div>
         </div>
-      </div>
+      </form>
       <div className="product-listing-wrapper">
         <div className="active-filter-container">
-          <small className="pill grey">
-            party <i className="uil uil-times pointer"></i>
-          </small>
+          {/* {globalState.filters.map((item) => {
+            return <Pill label={item} onClick={() => console.log("clicked")} />;
+          })} */}
         </div>
         <div className="product-listing-container">
-          {productIsLoading ? (
-            <h1>loading...</h1>
-          ) : (
-            productData.products.map((item) => {
+          {productIsLoading && <h1>loading...</h1>}
+          {productData &&
+            productData.products.length > 0 &&
+            !productIsLoading &&
+            filteredData.map((item) => {
               return (
                 <ProductCard
                   key={item.name}
@@ -132,16 +172,14 @@ export const ProductsScreen = () => {
                   imageUrl={item.imageUrl}
                   discountPillText={`${item.discountPercent}%`}
                   offerPillText={item.tag}
-                  onActionButtonClick={() => navigate(`/products/${item._id}`)}
+                  onActionButtonClick={() => addToCart(item)}
                   onIconClick={() => addToWishlistHandler(item)}
                   actionButtonText={"Add To Cart"}
                   isWishlisted={item % 2 === 0 ? true : false}
-                  isLoading={isAddingToWishList}
-                  loadingText={"Adding to wishlist..."}
                 />
               );
-            })
-          )}
+            })}
+          {!productData && !productIsLoading && <h1>loading...</h1>}
         </div>
       </div>
     </div>

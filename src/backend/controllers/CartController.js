@@ -45,7 +45,7 @@ export const addItemToCartHandler = function (schema, request) {
       );
     }
     const userCart = schema.users.findBy({ _id: userId }).cart;
-    const { product } = JSON.parse(request.requestBody);
+    const product = JSON.parse(request.requestBody);
     userCart.push({
       ...product,
       createdAt: formatDate(),
@@ -118,7 +118,7 @@ export const updateCartItemHandler = function (schema, request) {
       );
     }
     const userCart = schema.users.findBy({ _id: userId }).cart;
-    const { action } = JSON.parse(request.requestBody);
+    const action = JSON.parse(request.requestBody);
     if (action.type === "increment") {
       userCart.forEach((product) => {
         if (product._id === productId) {

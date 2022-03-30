@@ -68,12 +68,13 @@ export const buildHooks = (queryArray, baseQuery, dispatchFn) => {
         }
       };
       const initialState = {
-        data: [],
+        data: null,
         loading: true,
         error: false,
       };
       const [state, dispatch] = React.useReducer(reducer, initialState);
       React.useEffect(() => {
+        let componentMounted = false;
         // setLoading(true);
         baseQuery(`${item.query}/${urlParams}`)
           .then((res) => {
@@ -82,9 +83,11 @@ export const buildHooks = (queryArray, baseQuery, dispatchFn) => {
           .then((data) => {
             // setData(data);
             // setLoading(false);
-            dispatch({ type: "HAS_DATA", payload: data });
-            dispatch({ type: "IS_LOADING", payload: false });
-            enhancedispatch(dispatchFn, data, item);
+            if (!componentMounted) {
+              dispatch({ type: "HAS_DATA", payload: data });
+              dispatch({ type: "IS_LOADING", payload: false });
+              enhancedispatch(dispatchFn, data, item);
+            }
           })
           .catch((err) => {
             // setLoading(false);
@@ -92,7 +95,11 @@ export const buildHooks = (queryArray, baseQuery, dispatchFn) => {
             dispatch({ type: "IS_LOADING", payload: false });
             dispatch({ type: "HAS_ERROR", payload: err });
           });
-      }, []);
+        return () => {
+          dispatch({ type: "IS_LOADING", payload: false });
+          componentMounted = true;
+        };
+      }, [dispatchFn, urlParams]);
 
       return { ...state };
     };
@@ -100,7 +107,7 @@ export const buildHooks = (queryArray, baseQuery, dispatchFn) => {
     let useMutation = (urlParams = "") => {
       const [loading, setLoading] = React.useState(false);
       const [error, setError] = React.useState(false);
-      const [data, setData] = React.useState([]);
+      const [data, setData] = React.useState(null);
 
       let mutationCallBack = React.useCallback((body = {}, urlParams = "") => {
         setLoading(true);

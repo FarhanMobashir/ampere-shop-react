@@ -5,6 +5,7 @@ import { HeaderIcon } from "./HeaderIcon";
 import { HeaderSearch } from "./HeaderSearchBig";
 export const AppHeader = () => {
   const { state } = useData();
+  console.log("from reducer", state);
   const activeStyleForIcons = {
     background: "none",
     textDecoration: "none",
@@ -66,7 +67,7 @@ export const AppHeader = () => {
               <HeaderIcon
                 iconName={"uil-shopping-cart"}
                 withBadge={true}
-                badgeCount={2}
+                badgeCount={`${state.cart.length}`}
               />
             </CustomedNavLink>
             <CustomedNavLink to="/user/wishlist">

@@ -19,6 +19,7 @@ function App() {
           <Routes>
             {/* public routes  */}
             <Route path="/" element={<AppLayout />}>
+              <Route path="*" exact element={<AuthScreen />} />
               <Route path="/" element={<HomeScreen />} />
               <Route path="/mock" element={<Mockman />} />
               <Route path="/auth" element={<AuthScreen />} />

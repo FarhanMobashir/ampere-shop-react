@@ -4,6 +4,7 @@ import { AuthContext } from "./AuthContex";
 import { useData } from "./DataContext";
 
 export const ApiContext = React.createContext();
+ApiContext.displayName = "ApiContext";
 
 export const ApiProvider = ({ children }) => {
   const { dispatch: dataProviderDispatch } = useData();
