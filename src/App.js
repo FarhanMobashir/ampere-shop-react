@@ -10,42 +10,45 @@ import { AuthProvider } from "./contexts/AuthContex";
 import { PrivateRoute } from "./components/PrivateRoute";
 import { ApiProvider } from "./contexts/ApiContext";
 import { SingleProduct } from "./components/SingleProduct";
-
+import { DataProvider } from "./contexts/DataContext";
 function App() {
   return (
     <AuthProvider>
-      <ApiProvider>
-        <Routes>
-          {/* public routes  */}
-          <Route path="/" element={<AppLayout />}>
-            <Route path="/" element={<HomeScreen />} />
-            <Route path="/mock" element={<Mockman />} />
-            <Route path="/auth" element={<AuthScreen />} />
-            <Route path="/products" element={<ProductsScreen />} />
-            <Route path="/products/:productId" element={<SingleProduct />} />
+      <DataProvider>
+        <ApiProvider>
+          <Routes>
+            {/* public routes  */}
+            <Route path="/" element={<AppLayout />}>
+              <Route path="*" exact element={<AuthScreen />} />
+              <Route path="/" element={<HomeScreen />} />
+              <Route path="/mock" element={<Mockman />} />
+              <Route path="/auth" element={<AuthScreen />} />
+              <Route path="/products" element={<ProductsScreen />} />
+              <Route path="/products/:productId" element={<SingleProduct />} />
 
-            {/* private routes  */}
-            <Route path="/user">
-              <Route
-                path="/user/cart"
-                element={
-                  <PrivateRoute>
-                    <CartScreen />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/user/wishlist"
-                element={
-                  <PrivateRoute>
-                    <WishlistScreen />
-                  </PrivateRoute>
-                }
-              />
+              {/* private routes  */}
+              <Route path="/user">
+                <Route
+                  path="/user/cart"
+                  element={
+                    <PrivateRoute>
+                      <CartScreen />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/user/wishlist"
+                  element={
+                    <PrivateRoute>
+                      <WishlistScreen />
+                    </PrivateRoute>
+                  }
+                />
+              </Route>
             </Route>
-          </Route>
-        </Routes>
-      </ApiProvider>
+          </Routes>
+        </ApiProvider>
+      </DataProvider>
     </AuthProvider>
   );
 }

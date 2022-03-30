@@ -14,7 +14,9 @@ export const ProductCard = ({
   cardWithDismiss,
   actionButtonText,
   isWishlisted,
+  isLoading,
 }) => {
+  const [activeWishlist, setActiveWishlist] = React.useState(false);
   return (
     <div className="card-container-small">
       <div className="card-img-grid">

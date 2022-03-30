@@ -2,12 +2,13 @@ import React from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
 export const AuthContext = React.createContext();
-
+AuthContext.displayName = "AuthContext";
 export const AuthProvider = ({ children }) => {
-  const [authToken, setAuthToken] = useLocalStorage("authToken", null);
+  // const [authToken, setAuthToken] = useLocalStorage("authToken", null);
+  const [authToken, setAuthToken] = React.useState(null);
 
   const isAuthenticated = () => {
-    console.log("isAuthenticated: ", authToken);
+    // console.log("isAuthenticated: ", authToken);
     if (authToken) {
       return true;
     } else {
