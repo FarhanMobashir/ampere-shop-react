@@ -6,7 +6,7 @@ export const HomeScreen = () => {
   const [category, setCategory] = React.useState([]);
 
   React.useEffect(() => {
-    fetch("https://localhost:3000/api/categories")
+    fetch("/api/categories")
       .then((res) => res.json())
       .then((data) => {
         setCategory(data.categories);

@@ -38,7 +38,7 @@ export const ApiProvider = ({ children }) => {
       },
     ],
     fetchBaseQuery({
-      baseUrl: "http://localhost:3000/api",
+      baseUrl: "/api",
     }),
     dataProviderDispatch
   );
@@ -95,7 +95,7 @@ export const ApiProvider = ({ children }) => {
       },
     ],
     fetchBaseQuery({
-      baseUrl: "http://localhost:3000/api",
+      baseUrl: "/api",
       headers: headers,
     }),
     dataProviderDispatch
