@@ -6,8 +6,11 @@ import { useNavigate } from "react-router-dom";
 import { useData } from "../contexts/DataContext";
 import { Checkbox } from "../components/Checkbox";
 import { Slider } from "../components/Slider";
+import { useAuth } from "../contexts/AuthContex";
+import { Skeleton } from "../components/Skeleton";
 
 export const ProductsScreen = () => {
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { useallProducts, useallCategories, useaddToWishlist, useaddToCart } =
     useApi();
@@ -28,10 +31,6 @@ export const ProductsScreen = () => {
   const [sortCategory, setSortCategory] = React.useState([]);
   const [sortByPrice, setSortByPrice] = React.useState("");
   const [rating, setRating] = React.useState(0);
-
-  const addToWishlistHandler = (product) => {
-    addToWishlist(product);
-  };
 
   let filteredData = [];
   if (productData && categoryData) {
@@ -81,6 +80,71 @@ export const ProductsScreen = () => {
     console.log(sortCategory);
   };
 
+  /**
+   *
+   * @param {Object} product
+   * @example
+   * const product = {
+   * id: 1,
+   * name: "product name",
+   * price: 100,
+   * rating: 4,
+   * image: "image url",
+   * categoryName: "category name"
+   * }
+   */
+  const addToCartHandler = (product) => {
+    if (isAuthenticated()) {
+      addToCart(product);
+      if (!isAddingToCart) {
+        setSelectedProduct(product._id);
+      } else if (cartData) {
+        setSelectedProduct(null);
+      }
+    } else {
+      navigate("/login");
+    }
+  };
+
+  /**
+   *
+   * @param {Object} product
+   * @example
+   * const product = {
+   * id: 1,
+   * name: "product name",
+   * price: 100,
+   * rating: 4,
+   * image: "image url",
+   * categoryName: "category name"
+   * }
+   */
+  const addToWishlistHandler = (product) => {
+    if (isAuthenticated()) {
+      addToWishlist(product);
+      if (!isAddingToCart) {
+        setSelectedProduct(product._id);
+      } else if (wishListData) {
+        setSelectedProduct(null);
+      }
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const showActionButtonText = (product) => {
+    if (selectedProduct === product._id) {
+      if (isAddingToCart) {
+        return "Adding to cart";
+      }
+      if (isAddingToWishList) {
+        return "Wishlisting";
+      }
+    }
+    return "Add to cart";
+  };
+
+  const [selectedProduct, setSelectedProduct] = React.useState(null);
   return (
     <div id="product-screen-container">
       <form className="filter-container" name="filter-form">
@@ -154,7 +218,8 @@ export const ProductsScreen = () => {
           })} */}
         </div>
         <div className="product-listing-container">
-          {productIsLoading && <h1>loading...</h1>}
+          {productIsLoading &&
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => <Skeleton />)}
           {productData &&
             productData.products.length > 0 &&
             !productIsLoading &&
@@ -172,10 +237,14 @@ export const ProductsScreen = () => {
                   imageUrl={item.imageUrl}
                   discountPillText={`${item.discountPercent}%`}
                   offerPillText={item.tag}
-                  onActionButtonClick={() => addToCart(item)}
+                  onActionButtonClick={() => addToCartHandler(item)}
                   onIconClick={() => addToWishlistHandler(item)}
-                  actionButtonText={"Add To Cart"}
-                  isWishlisted={item % 2 === 0 ? true : false}
+                  actionButtonText={showActionButtonText(item)}
+                  isLoading={
+                    selectedProduct === item._id
+                      ? isAddingToCart || isAddingToWishList
+                      : false
+                  }
                 />
               );
             })}

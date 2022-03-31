@@ -453,7 +453,75 @@
   }
 }
 
- /* extra css */
+/* empty state css */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  gap: 5px;
+  border: 2px dashed var(--black-100);
+  border-radius: 1rem;
+}
+
+.empty-state-image {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+.empty-state-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* skeleton css */
+.skeleton-container {
+  border-radius: 1rem;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.skeleton-circle {
+  padding: 5rem;
+  background-color: var(--black-100);
+  border-radius: 50%;
+}
+
+.skeleton-item-image {
+  padding: 1rem;
+  background-color: var(--black-000);
+  height: 20rem;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-item-button {
+  padding: 1rem;
+  /* background-color: var(--black-000); */
+  height: 5rem;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton {
+  animation: skeleton-loading 1s linear infinite alternate;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: var(--black-100);
+  }
+  100% {
+    background-color: var(--black-000);
+  }
+}
+
+/* extra css */
 .pointer {
   cursor: pointer;
 }

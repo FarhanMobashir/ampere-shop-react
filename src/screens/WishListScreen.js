@@ -1,7 +1,11 @@
 import React from "react";
+import { EmptyState } from "../components/EmptyState";
 import { ProductCard } from "../components/ProductCard";
 import { useApi } from "../contexts/ApiContext";
 import { useData } from "../contexts/DataContext";
+import emptyImage from "../assets/boating.png";
+import { useNavigate } from "react-router-dom";
+import { Skeleton } from "../components/Skeleton";
 export const WishlistScreen = () => {
   const { usegetWishlist, usedeleteFromWishlist, useaddToCart } = useApi();
   const { data: wishlistData, loading: wishlistIsLoading } = usegetWishlist();
@@ -11,21 +15,23 @@ export const WishlistScreen = () => {
     { loading: isDeletingFromWishList, data: wishListData },
   ] = usedeleteFromWishlist();
   const [addToCart, { loading: isAddingToCart }] = useaddToCart();
+  const navigate = useNavigate();
   return (
     <div id="wishlist-main-container">
       <div className="page-title-wrapper mv-20">
         <h1 className="h5 black-6">
-          My Wishlist{" "}
+          My Wishlist
           <span className="regular">
             {!wishlistIsLoading && state.wishlist.length} Item
           </span>
         </h1>
       </div>
       <div className="wishlist-cards-container">
-        {wishlistIsLoading ? (
-          <h1>Loading...</h1>
-        ) : (
-          state.wishlist.map((item) => {
+        {wishlistIsLoading &&
+          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => <Skeleton />)}
+        {!wishlistIsLoading &&
+          wishlistData &&
+          wishlistData.wishlist.map((item) => {
             return (
               <ProductCard
                 key={item._id}
@@ -46,8 +52,18 @@ export const WishlistScreen = () => {
                 cardWithDismiss={true}
               />
             );
-          })
-        )}
+          })}
+        {!wishlistIsLoading &&
+          wishlistData &&
+          wishlistData.wishlist.length === 0 && (
+            <EmptyState
+              imageUrl={emptyImage}
+              title="Your Wishlist is empty"
+              description="Add items to your wishlist to see them here"
+              buttonText="Add to Wishlist"
+              onButtonClick={() => navigate("/products")}
+            />
+          )}
       </div>
     </div>
   );

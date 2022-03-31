@@ -1,16 +1,22 @@
 import React from "react";
 import { CartCard } from "../components/CartCard";
+import { EmptyState } from "../components/EmptyState";
 import { PriceDetailCard } from "../components/PriceDetailCard";
 import { useApi } from "../contexts/ApiContext";
 import { useData } from "../contexts/DataContext";
+import emptyImage from "../assets/shopnow.png";
+import { useNavigate } from "react-router-dom";
+import { Skeleton } from "../components/Skeleton";
+
 export const CartScreen = () => {
   const { usegetCart, usedeleteFromCart, useupdateCart, useaddToWishlist } =
     useApi();
-  const { loading: isLoadingCart } = usegetCart();
+  const { loading: isLoadingCart, data: cartData } = usegetCart();
   const [removeFromCart, { loading: isDeletingFromCart }] = usedeleteFromCart();
   const [updateCart, { loading: isUpdatingCart }] = useupdateCart();
   const [addToWishlist, { loading: isAddingToCart }] = useaddToWishlist();
   const { state } = useData();
+  const navigate = useNavigate();
 
   const priceOfItems = state.cart.reduce(
     (acc, cr) => parseInt(cr.price) * cr.qty + parseInt(acc),
@@ -29,40 +35,59 @@ export const CartScreen = () => {
       </div>
       <div class="cart-and-summary-container">
         <div class="cart-cards-container">
-          {isLoadingCart ? (
-            <h1>Loading...</h1>
-          ) : (
-            state.cart.map((item) => (
-              <CartCard
-                key={item._id}
-                productName={item.name}
-                categoryName={item.categoryName}
-                price={item.price}
-                cutoutPrice="$499.00"
-                rating={item.rating}
-                imageUrl={item.imageUrl}
-                productCount={item.qty}
-                onIncrement={() => updateCart({ type: "increment" }, item._id)}
-                onDecrement={() => updateCart({ type: "decrement" }, item._id)}
-                onMoveToWishlist={() => {
-                  addToWishlist(item);
-                  removeFromCart(item, item._id);
-                }}
-                onRemove={() => removeFromCart(item, item._id)}
-              />
-            ))
-          )}
+          {isLoadingCart &&
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => <Skeleton />)}
+          {!isLoadingCart &&
+            cartData &&
+            state.cart.map((item) => {
+              return (
+                <CartCard
+                  key={item._id}
+                  productName={item.name}
+                  categoryName={item.categoryName}
+                  price={item.price}
+                  cutoutPrice="$499.00"
+                  rating={item.rating}
+                  imageUrl={item.imageUrl}
+                  productCount={item.qty}
+                  onIncrement={() =>
+                    updateCart({ type: "increment" }, item._id)
+                  }
+                  onDecrement={() =>
+                    updateCart({ type: "decrement" }, item._id)
+                  }
+                  onMoveToWishlist={() => {
+                    addToWishlist(item);
+                    removeFromCart(item, item._id);
+                  }}
+                  onRemove={() => removeFromCart(item, item._id)}
+                />
+              );
+            })}
         </div>
-        <PriceDetailCard
-          priceOfItems={`$ ${priceOfItems}`}
-          itemCount={5}
-          discount={`-$${discount}`}
-          shipping={`+$${shipping}`}
-          deliveryCharges="FREE"
-          totalPrice={`$${totalPrice}`}
-          onActionButtonClick={() => console.log("Checkout clicked")}
-        />
+
+        {!isLoadingCart && cartData && cartData.cart.length === 0 && null}
+        {!isLoadingCart && cartData && cartData.cart.length > 0 && (
+          <PriceDetailCard
+            priceOfItems={`$ ${priceOfItems}`}
+            itemCount={5}
+            discount={`-$${discount}`}
+            shipping={`+$${shipping}`}
+            deliveryCharges="FREE"
+            totalPrice={`$${totalPrice}`}
+            onActionButtonClick={() => console.log("Checkout clicked")}
+          />
+        )}
       </div>
+      {!isLoadingCart && cartData && cartData.cart.length === 0 && (
+        <EmptyState
+          imageUrl={emptyImage}
+          title="Your Cart is empty"
+          description="Add items to your cart to see them here"
+          buttonText="Continue Shopping"
+          onButtonClick={() => navigate("/products")}
+        />
+      )}
     </div>
   );
 };
