@@ -1,4 +1,5 @@
 import React from "react";
+import { Skeleton } from "./Skeleton";
 
 export const ProductCard = ({
   productName,
@@ -15,6 +16,9 @@ export const ProductCard = ({
   actionButtonText,
   isLoading,
 }) => {
+  if (isLoading) {
+    return <Skeleton />;
+  }
   return (
     <div className="card-container-small">
       <div className="card-img-grid">

@@ -5,7 +5,7 @@ import { useApi } from "../contexts/ApiContext";
 import { useData } from "../contexts/DataContext";
 import emptyImage from "../assets/boating.png";
 import { useNavigate } from "react-router-dom";
-import { Skeleton } from "../components/Skeleton";
+import { ProductLoader } from "../components/ProductLoader";
 export const WishlistScreen = () => {
   const { usegetWishlist, usedeleteFromWishlist, useaddToCart } = useApi();
   const { data: wishlistData, loading: wishlistIsLoading } = usegetWishlist();
@@ -27,11 +27,10 @@ export const WishlistScreen = () => {
         </h1>
       </div>
       <div className="wishlist-cards-container">
-        {wishlistIsLoading &&
-          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => <Skeleton />)}
+        {wishlistIsLoading && <ProductLoader />}
         {!wishlistIsLoading &&
           wishlistData &&
-          wishlistData.wishlist.map((item) => {
+          state.wishlist.map((item) => {
             return (
               <ProductCard
                 key={item._id}
@@ -53,17 +52,15 @@ export const WishlistScreen = () => {
               />
             );
           })}
-        {!wishlistIsLoading &&
-          wishlistData &&
-          wishlistData.wishlist.length === 0 && (
-            <EmptyState
-              imageUrl={emptyImage}
-              title="Your Wishlist is empty"
-              description="Add items to your wishlist to see them here"
-              buttonText="Add to Wishlist"
-              onButtonClick={() => navigate("/products")}
-            />
-          )}
+        {!wishlistIsLoading && wishlistData && state.wishlist.length === 0 && (
+          <EmptyState
+            imageUrl={emptyImage}
+            title="Your Wishlist is empty"
+            description="Add items to your wishlist to see them here"
+            buttonText="Add to Wishlist"
+            onButtonClick={() => navigate("/products")}
+          />
+        )}
       </div>
     </div>
   );

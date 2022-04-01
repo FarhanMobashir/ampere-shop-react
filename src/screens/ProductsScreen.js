@@ -7,7 +7,7 @@ import { useData } from "../contexts/DataContext";
 import { Checkbox } from "../components/Checkbox";
 import { Slider } from "../components/Slider";
 import { useAuth } from "../contexts/AuthContex";
-import { Skeleton } from "../components/Skeleton";
+import { ProductLoader } from "../components/ProductLoader";
 
 export const ProductsScreen = () => {
   const { isAuthenticated } = useAuth();
@@ -32,6 +32,7 @@ export const ProductsScreen = () => {
   const [sortByPrice, setSortByPrice] = React.useState("");
   const [rating, setRating] = React.useState(0);
 
+  // * filtering products
   let filteredData = [];
   if (productData && categoryData) {
     ///* sort by category
@@ -80,19 +81,6 @@ export const ProductsScreen = () => {
     console.log(sortCategory);
   };
 
-  /**
-   *
-   * @param {Object} product
-   * @example
-   * const product = {
-   * id: 1,
-   * name: "product name",
-   * price: 100,
-   * rating: 4,
-   * image: "image url",
-   * categoryName: "category name"
-   * }
-   */
   const addToCartHandler = (product) => {
     if (isAuthenticated()) {
       addToCart(product);
@@ -106,19 +94,6 @@ export const ProductsScreen = () => {
     }
   };
 
-  /**
-   *
-   * @param {Object} product
-   * @example
-   * const product = {
-   * id: 1,
-   * name: "product name",
-   * price: 100,
-   * rating: 4,
-   * image: "image url",
-   * categoryName: "category name"
-   * }
-   */
   const addToWishlistHandler = (product) => {
     if (isAuthenticated()) {
       addToWishlist(product);
@@ -133,14 +108,6 @@ export const ProductsScreen = () => {
   };
 
   const showActionButtonText = (product) => {
-    if (selectedProduct === product._id) {
-      if (isAddingToCart) {
-        return "Adding to cart";
-      }
-      if (isAddingToWishList) {
-        return "Wishlisting";
-      }
-    }
     return "Add to cart";
   };
 
@@ -171,7 +138,7 @@ export const ProductsScreen = () => {
                 globalState.categories.map((item) => {
                   return (
                     <Checkbox
-                      key={item.id}
+                      key={item.categoryName}
                       label={item.categoryName.toUpperCase()}
                       value={item.categoryName}
                       name="category"
@@ -218,15 +185,14 @@ export const ProductsScreen = () => {
           })} */}
         </div>
         <div className="product-listing-container">
-          {productIsLoading &&
-            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => <Skeleton />)}
+          {productIsLoading && <ProductLoader />}
           {productData &&
             productData.products.length > 0 &&
             !productIsLoading &&
             filteredData.map((item) => {
               return (
                 <ProductCard
-                  key={item.name}
+                  key={item._id}
                   productName={item.name}
                   categoryName={item.categoryName.toUpperCase()}
                   price={`₹ ${item.price}`}

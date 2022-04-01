@@ -7,7 +7,7 @@ export const Slider = ({ min, max, rangeValue, onChange }) => {
         min={min}
         max={max}
         value={rangeValue}
-        class="slider"
+        className="slider"
         id="myRange"
         onChange={onChange}
       />

@@ -6,7 +6,7 @@ import { useApi } from "../contexts/ApiContext";
 import { useData } from "../contexts/DataContext";
 import emptyImage from "../assets/shopnow.png";
 import { useNavigate } from "react-router-dom";
-import { Skeleton } from "../components/Skeleton";
+import { ProductLoader } from "../components/ProductLoader";
 
 export const CartScreen = () => {
   const { usegetCart, usedeleteFromCart, useupdateCart, useaddToWishlist } =
@@ -35,8 +35,7 @@ export const CartScreen = () => {
       </div>
       <div class="cart-and-summary-container">
         <div class="cart-cards-container">
-          {isLoadingCart &&
-            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => <Skeleton />)}
+          {isLoadingCart && <ProductLoader />}
           {!isLoadingCart &&
             cartData &&
             state.cart.map((item) => {
@@ -67,7 +66,7 @@ export const CartScreen = () => {
         </div>
 
         {!isLoadingCart && cartData && cartData.cart.length === 0 && null}
-        {!isLoadingCart && cartData && cartData.cart.length > 0 && (
+        {!isLoadingCart && cartData && state.cart.length > 0 && (
           <PriceDetailCard
             priceOfItems={`$ ${priceOfItems}`}
             itemCount={5}
@@ -79,7 +78,7 @@ export const CartScreen = () => {
           />
         )}
       </div>
-      {!isLoadingCart && cartData && cartData.cart.length === 0 && (
+      {!isLoadingCart && cartData && state.cart.length === 0 && (
         <EmptyState
           imageUrl={emptyImage}
           title="Your Cart is empty"
