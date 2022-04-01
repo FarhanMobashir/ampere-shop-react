@@ -1,5 +1,5 @@
 import React from "react";
-import { Skeleton } from "./Skeleton";
+import { CardSkeleton } from "./Skeleton";
 
 export const ProductCard = ({
   productName,
@@ -15,9 +15,10 @@ export const ProductCard = ({
   cardWithDismiss,
   actionButtonText,
   isLoading,
+  isWishlishted,
 }) => {
   if (isLoading) {
-    return <Skeleton />;
+    return <CardSkeleton />;
   }
   return (
     <div className="card-container-small">
@@ -36,7 +37,9 @@ export const ProductCard = ({
         ) : (
           <i
             onClick={onIconClick}
-            className={`uil uil-heart card-icon-small icon-on-image pointer`}
+            className={`uil uil-heart card-icon-small icon-on-image pointer
+            ${isWishlishted ? "red" : ""}
+            `}
           ></i>
         )}
       </div>

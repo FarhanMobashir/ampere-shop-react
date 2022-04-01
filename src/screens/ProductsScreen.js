@@ -8,12 +8,18 @@ import { Checkbox } from "../components/Checkbox";
 import { Slider } from "../components/Slider";
 import { useAuth } from "../contexts/AuthContex";
 import { ProductLoader } from "../components/ProductLoader";
+import { Toast } from "../components/Toast";
 
 export const ProductsScreen = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const { useallProducts, useallCategories, useaddToWishlist, useaddToCart } =
-    useApi();
+  const {
+    useallProducts,
+    useallCategories,
+    useaddToWishlist,
+    useaddToCart,
+    usedeleteFromWishlist,
+  } = useApi();
 
   const { data: productData, loading: productIsLoading } = useallProducts();
 
@@ -23,8 +29,15 @@ export const ProductsScreen = () => {
   const [addToWishlist, { loading: isAddingToWishList, data: wishListData }] =
     useaddToWishlist();
 
-  const [addToCart, { loading: isAddingToCart, data: cartData }] =
-    useaddToCart();
+  const [
+    deleteFromWishlist,
+    { loading: isRemovingFromWishlist, data: removedWishlistData },
+  ] = usedeleteFromWishlist();
+
+  const [
+    addToCart,
+    { loading: isAddingToCart, data: cartData, error: errorInAddingToCart },
+  ] = useaddToCart();
 
   const { state: globalState, dispatch: globalDispatch } = useData();
   // * local states
@@ -83,7 +96,11 @@ export const ProductsScreen = () => {
 
   const addToCartHandler = (product) => {
     if (isAuthenticated()) {
-      addToCart(product);
+      if (checkDb(globalState.cart, product._id)) {
+        navigate("/user/cart");
+      } else {
+        addToCart(product);
+      }
       if (!isAddingToCart) {
         setSelectedProduct(product._id);
       } else if (cartData) {
@@ -96,8 +113,12 @@ export const ProductsScreen = () => {
 
   const addToWishlistHandler = (product) => {
     if (isAuthenticated()) {
-      addToWishlist(product);
-      if (!isAddingToCart) {
+      if (checkDb(globalState.wishlist, product._id)) {
+        deleteFromWishlist(product, product._id);
+      } else {
+        addToWishlist(product);
+      }
+      if (!isAddingToWishList || isRemovingFromWishlist) {
         setSelectedProduct(product._id);
       } else if (wishListData) {
         setSelectedProduct(null);
@@ -107,13 +128,54 @@ export const ProductsScreen = () => {
     }
   };
 
+  function checkDb(state, id) {
+    const checkData = state.find((item) => item._id === id);
+    if (checkData) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   const showActionButtonText = (product) => {
+    console.log(globalState.cart.find((item) => item._id === product._id));
+    if (checkDb(globalState.cart, product._id)) {
+      return "Go to cart";
+    }
     return "Add to cart";
   };
 
   const [selectedProduct, setSelectedProduct] = React.useState(null);
   return (
     <div id="product-screen-container">
+      {!isAddingToCart && cartData && (
+        <Toast
+          type="success"
+          title="Added to cart"
+          message="Successfully added to cart"
+        />
+      )}
+      {!isAddingToCart && errorInAddingToCart && (
+        <Toast
+          type="danger"
+          title="Error"
+          message="Please check your internet connection"
+        />
+      )}
+      {!isAddingToWishList && wishListData && (
+        <Toast
+          type="success"
+          title="Added to wishlist"
+          message="Successfully added to wishlist"
+        />
+      )}
+      {!isRemovingFromWishlist && removedWishlistData && (
+        <Toast
+          type="success"
+          title="Removed from wishlist"
+          message="Successfully removed from wishlist"
+        />
+      )}
       <form className="filter-container" name="filter-form">
         <div className="flex-between-container">
           <h1 className="h4 black-6">Filters</h1>
@@ -211,6 +273,7 @@ export const ProductsScreen = () => {
                       ? isAddingToCart || isAddingToWishList
                       : false
                   }
+                  isWishlishted={checkDb(globalState.wishlist, item._id)}
                 />
               );
             })}

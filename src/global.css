@@ -521,6 +521,25 @@
   }
 }
 
+/* toast positions */
+.top-right {
+  position: fixed;
+  top: 12vh;
+  right: 4vh;
+  z-index: 999;
+}
+
+@media (max-width: 400px) {
+  .bottom-center {
+    position: fixed;
+    top: auto;
+    bottom: 4vh;
+    left: 10vh;
+    right: 10vh;
+    z-index: 999;
+  }
+}
+
 /* extra css */
 .pointer {
   cursor: pointer;
