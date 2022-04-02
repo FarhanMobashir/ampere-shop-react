@@ -1,11 +1,13 @@
 import React from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useData } from "./DataContext";
 
 export const AuthContext = React.createContext();
 AuthContext.displayName = "AuthContext";
 export const AuthProvider = ({ children }) => {
   // const [authToken, setAuthToken] = useLocalStorage("authToken", null);
   const [authToken, setAuthToken] = React.useState(null);
+  const { dispatch: globalDisptach } = useData();
 
   const isAuthenticated = () => {
     // console.log("isAuthenticated: ", authToken);
@@ -23,6 +25,9 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.clear("authToken");
     setAuthToken(null);
+    globalDisptach({
+      type: "clearState",
+    });
   };
 
   const value = {

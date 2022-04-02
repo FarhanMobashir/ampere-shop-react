@@ -1,11 +1,9 @@
-import { useApi } from "../contexts/ApiContext";
 import { useData } from "../contexts/DataContext";
 import { CustomedNavLink } from "./CustomNavLink";
 import { HeaderIcon } from "./HeaderIcon";
 import { HeaderSearch } from "./HeaderSearchBig";
 export const AppHeader = () => {
   const { state } = useData();
-  console.log("from reducer", state);
   const activeStyleForIcons = {
     background: "none",
     textDecoration: "none",

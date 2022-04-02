@@ -7,14 +7,23 @@ import { useData } from "../contexts/DataContext";
 import emptyImage from "../assets/shopnow.png";
 import { useNavigate } from "react-router-dom";
 import { ProductLoader } from "../components/ProductLoader";
+import { checkDb } from "../helpers/helperFuntions";
+import { Toast } from "../components/Toast";
 
 export const CartScreen = () => {
   const { usegetCart, usedeleteFromCart, useupdateCart, useaddToWishlist } =
     useApi();
   const { loading: isLoadingCart, data: cartData } = usegetCart();
-  const [removeFromCart, { loading: isDeletingFromCart }] = usedeleteFromCart();
-  const [updateCart, { loading: isUpdatingCart }] = useupdateCart();
-  const [addToWishlist, { loading: isAddingToCart }] = useaddToWishlist();
+  const [
+    removeFromCart,
+    { loading: isDeletingFromCart, data: deletedCartData },
+  ] = usedeleteFromCart();
+  const [updateCart, { loading: isUpdatingCart, data: updatedCartData }] =
+    useupdateCart();
+  const [
+    addToWishlist,
+    { loading: isAddingToWishlist, data: addedWishlistData },
+  ] = useaddToWishlist();
   const { state } = useData();
   const navigate = useNavigate();
 
@@ -26,6 +35,23 @@ export const CartScreen = () => {
   const shipping = priceOfItems > 240 ? 0 : 10;
   const totalPrice = priceOfItems - discount + shipping;
 
+  const moveToWishlistHandler = (product) => {
+    if (checkDb(state.wishlist, product._id)) {
+      return;
+    } else {
+      addToWishlist(product);
+      removeFromCart(product, product._id);
+    }
+  };
+
+  const moveToWishlistTextHandler = (product) => {
+    if (checkDb(state.wishlist, product._id)) {
+      return "Already in Wishlist";
+    } else {
+      return "Move to Wishlist";
+    }
+  };
+
   return (
     <div id="cart-main-container">
       <div class="page-title-wrapper mv-20">
@@ -35,6 +61,21 @@ export const CartScreen = () => {
       </div>
       <div class="cart-and-summary-container">
         <div class="cart-cards-container">
+          {!isDeletingFromCart && deletedCartData && (
+            <Toast
+              type="success"
+              title="Removed From Cart"
+              message="Item removed from cart successfully"
+            />
+          )}
+          {!isUpdatingCart && updatedCartData && (
+            <Toast
+              type="success"
+              title="Quantity updated"
+              message="Quantity of item updated successfully"
+            />
+          )}
+
           {isLoadingCart && <ProductLoader />}
           {!isLoadingCart &&
             cartData &&
@@ -56,10 +97,10 @@ export const CartScreen = () => {
                     updateCart({ type: "decrement" }, item._id)
                   }
                   onMoveToWishlist={() => {
-                    addToWishlist(item);
-                    removeFromCart(item, item._id);
+                    moveToWishlistHandler(item);
                   }}
                   onRemove={() => removeFromCart(item, item._id)}
+                  moveToWishlistText={moveToWishlistTextHandler(item)}
                 />
               );
             })}

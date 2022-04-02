@@ -5,7 +5,7 @@ export const Toast = ({ message, type, title }) => {
   React.useEffect(() => {
     let timeout = setTimeout(() => {
       setShowModal(false);
-    }, 1000);
+    }, 1500);
     return () => {
       clearTimeout(timeout);
     };

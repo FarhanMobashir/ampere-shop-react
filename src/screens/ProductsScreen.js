@@ -138,7 +138,6 @@ export const ProductsScreen = () => {
   }
 
   const showActionButtonText = (product) => {
-    console.log(globalState.cart.find((item) => item._id === product._id));
     if (checkDb(globalState.cart, product._id)) {
       return "Go to cart";
     }

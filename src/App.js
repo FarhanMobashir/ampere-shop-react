@@ -13,8 +13,8 @@ import { SingleProduct } from "./components/SingleProduct";
 import { DataProvider } from "./contexts/DataContext";
 function App() {
   return (
-    <AuthProvider>
-      <DataProvider>
+    <DataProvider>
+      <AuthProvider>
         <ApiProvider>
           <Routes>
             {/* public routes  */}
@@ -48,8 +48,8 @@ function App() {
             </Route>
           </Routes>
         </ApiProvider>
-      </DataProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </DataProvider>
   );
 }
 

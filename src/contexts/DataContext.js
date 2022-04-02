@@ -47,6 +47,11 @@ const reducer = produce((state = initialState, action) => {
   if (action.type === "updateCart") {
     state.cart = action.payload.cart;
   }
+
+  // * clear state
+  if (action.type === "clearState") {
+    return initialState;
+  }
 }, initialState);
 
 export const DataContext = React.createContext();
@@ -54,7 +59,6 @@ DataContext.displayName = "DataContext";
 
 export const DataProvider = ({ children }) => {
   const [state, dispatch] = useThunkReducer(reducer, initialState);
-
   return (
     <DataContext.Provider value={{ state, dispatch }}>
       {children}
