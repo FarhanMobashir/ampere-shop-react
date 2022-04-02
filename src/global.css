@@ -398,15 +398,14 @@
 .product-listing-container {
   padding: 1% 2%;
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   flex-wrap: wrap;
   gap: 2rem;
 }
 
 @media (max-width: 600px) {
   .product-listing-container {
-    /* flex-direction: column; */
-    justify-content: space-evenly;
+    margin: 0 20px;
   }
   #product-screen-container {
     flex-direction: column;
@@ -538,6 +537,13 @@
     right: 10vh;
     z-index: 999;
   }
+}
+
+/* modal */
+
+.modal {
+  background-color: black;
+  opacity: 0.1;
 }
 
 /* extra css */

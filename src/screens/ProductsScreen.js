@@ -2,16 +2,19 @@ import React from "react";
 import { RadioButton } from "../components/RadioButton";
 import { ProductCard } from "../components/ProductCard";
 import { useApi } from "../contexts/ApiContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useData } from "../contexts/DataContext";
 import { Checkbox } from "../components/Checkbox";
 import { Slider } from "../components/Slider";
 import { useAuth } from "../contexts/AuthContex";
 import { ProductLoader } from "../components/ProductLoader";
 import { Toast } from "../components/Toast";
+import { checkDb } from "../helpers/helperFuntions";
 
 export const ProductsScreen = () => {
   const { isAuthenticated } = useAuth();
+  const location = useLocation();
+
   const navigate = useNavigate();
   const {
     useallProducts,
@@ -20,6 +23,8 @@ export const ProductsScreen = () => {
     useaddToCart,
     usedeleteFromWishlist,
   } = useApi();
+
+  const { state: globalState, dispatch: globalDispatch } = useData();
 
   const { data: productData, loading: productIsLoading } = useallProducts();
 
@@ -39,23 +44,36 @@ export const ProductsScreen = () => {
     { loading: isAddingToCart, data: cartData, error: errorInAddingToCart },
   ] = useaddToCart();
 
-  const { state: globalState, dispatch: globalDispatch } = useData();
-  // * local states
-  const [sortCategory, setSortCategory] = React.useState([]);
+  React.useEffect(() => {
+    if (!productIsLoading && !categoriesIsLoading) {
+      if (location.state) {
+        globalDispatch({
+          type: "setActiveCategory",
+          payload: location.state.categoryIndex,
+        });
+      }
+    }
+  }, [categoriesIsLoading, productIsLoading]);
+
+  // * local states for filters
   const [sortByPrice, setSortByPrice] = React.useState("");
   const [rating, setRating] = React.useState(0);
-
   // * filtering products
   let filteredData = [];
   if (productData && categoryData) {
     ///* sort by category
     filteredData = productData.products
       .filter((product) => {
-        if (sortCategory.length === 0) {
+        let activeCategories = [];
+        globalState.activeCategories.forEach((item, idx) => {
+          if (item === true) {
+            activeCategories.push(globalState.categories[idx].categoryName);
+          }
+        });
+        if (activeCategories.length === 0) {
           return product;
-        } else {
-          return sortCategory.includes(product.categoryName);
         }
+        return activeCategories.indexOf(product.categoryName) > -1;
       })
       // * sort by price
       .sort((a, b) => {
@@ -76,24 +94,6 @@ export const ProductsScreen = () => {
         }
       });
   }
-
-  const setSortCategoryHandler = (e) => {
-    console.log(e.target.value, e.target.checked);
-    const checkInclude = sortCategory.includes(e.target.value);
-    const checkValue = e.target.value;
-    const checkChecked = e.target.checked;
-    if (checkInclude && checkChecked) {
-      return;
-    } else if (!checkInclude && checkChecked) {
-      setSortCategory([...sortCategory, checkValue]);
-    } else if (checkInclude && !checkChecked) {
-      setSortCategory(
-        sortCategory.filter((category) => category !== checkValue)
-      );
-    }
-    console.log(sortCategory);
-  };
-
   const addToCartHandler = (product) => {
     if (isAuthenticated()) {
       if (checkDb(globalState.cart, product._id)) {
@@ -107,7 +107,7 @@ export const ProductsScreen = () => {
         setSelectedProduct(null);
       }
     } else {
-      navigate("/login");
+      navigate("/auth");
     }
   };
 
@@ -124,18 +124,9 @@ export const ProductsScreen = () => {
         setSelectedProduct(null);
       }
     } else {
-      navigate("/login");
+      navigate("/auth");
     }
   };
-
-  function checkDb(state, id) {
-    const checkData = state.find((item) => item._id === id);
-    if (checkData) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 
   const showActionButtonText = (product) => {
     if (checkDb(globalState.cart, product._id)) {
@@ -143,7 +134,6 @@ export const ProductsScreen = () => {
     }
     return "Add to cart";
   };
-
   const [selectedProduct, setSelectedProduct] = React.useState(null);
   return (
     <div id="product-screen-container">
@@ -183,31 +173,38 @@ export const ProductsScreen = () => {
             type="reset"
             value="Clear"
             onClick={() => {
-              setSortCategory([]);
               setSortByPrice("");
               setRating(0);
+              globalDispatch({
+                type: "clearActiveCategory",
+              });
             }}
           />
         </div>
+
         <div className="filter-box">
           <div action="" className="form-group">
             <div className="radio-checkbox-container">
               <h5 className="form-group-heading">Category</h5>
-              {categoriesIsLoading ? (
-                <h1>loading...</h1>
-              ) : (
-                globalState.categories.map((item) => {
+              {categoriesIsLoading && <h1>loading...</h1>}
+              {!categoriesIsLoading &&
+                globalState.activeCategories.map((item, idx) => {
                   return (
                     <Checkbox
-                      key={item.categoryName}
-                      label={item.categoryName.toUpperCase()}
-                      value={item.categoryName}
+                      key={categoryData.categories[idx]._id}
+                      label={categoryData.categories[idx].categoryName}
+                      value={categoryData.categories[idx].categoryName}
                       name="category"
-                      onChange={setSortCategoryHandler}
+                      onChange={(e) =>
+                        globalDispatch({
+                          type: "setActiveCategory",
+                          payload: idx,
+                        })
+                      }
+                      checked={item}
                     />
                   );
-                })
-              )}
+                })}
             </div>
             <div className="radio-checkbox-container">
               <h5 className="form-group-heading">Sort By Price</h5>
@@ -239,6 +236,7 @@ export const ProductsScreen = () => {
           </div>
         </div>
       </form>
+
       <div className="product-listing-wrapper">
         <div className="active-filter-container">
           {/* {globalState.filters.map((item) => {
@@ -268,9 +266,7 @@ export const ProductsScreen = () => {
                   onIconClick={() => addToWishlistHandler(item)}
                   actionButtonText={showActionButtonText(item)}
                   isLoading={
-                    selectedProduct === item._id
-                      ? isAddingToCart || isAddingToWishList
-                      : false
+                    selectedProduct === item._id ? isAddingToCart : false
                   }
                   isWishlishted={checkDb(globalState.wishlist, item._id)}
                 />

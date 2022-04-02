@@ -3,7 +3,6 @@ import { CustomedNavLink } from "./CustomNavLink";
 import { HeaderIcon } from "./HeaderIcon";
 import { HeaderSearch } from "./HeaderSearchBig";
 export const AppHeader = () => {
-  const { state } = useData();
   const activeStyleForIcons = {
     background: "none",
     textDecoration: "none",
@@ -24,6 +23,8 @@ export const AppHeader = () => {
     margin: "5px 0px",
     padding: "4px",
   };
+
+  const { state } = useData();
 
   return (
     <header id="header">

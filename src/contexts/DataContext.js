@@ -8,6 +8,7 @@ const initialState = {
   cart: [],
   categories: [],
   wishlist: [],
+  activeCategories: [],
 };
 
 const reducer = produce((state = initialState, action) => {
@@ -19,7 +20,23 @@ const reducer = produce((state = initialState, action) => {
   // * categories actions
   if (action.type === "allCategories") {
     state.categories = action.payload.categories;
+    state.activeCategories = new Array(action.payload.categories.length).fill(
+      false
+    );
   }
+
+  // ? set active category for ui
+  if (action.type === "setActiveCategory") {
+    state.activeCategories[action.payload] =
+      !state.activeCategories[action.payload];
+  }
+
+  if (action.type === "clearActiveCategory") {
+    state.activeCategories = new Array(state.activeCategories.length).fill(
+      false
+    );
+  }
+
   // * wishlist actions
   if (action.type === "getWishlist") {
     state.wishlist = action.payload.wishlist;

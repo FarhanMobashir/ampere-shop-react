@@ -1,5 +1,4 @@
 import React from "react";
-import { CardSkeleton } from "./Skeleton";
 
 export const ProductCard = ({
   productName,
@@ -17,9 +16,6 @@ export const ProductCard = ({
   isLoading,
   isWishlishted,
 }) => {
-  if (isLoading) {
-    return <CardSkeleton />;
-  }
   return (
     <div className="card-container-small">
       <div className="card-img-grid">

@@ -116,7 +116,7 @@ export const buildHooks = (queryArray, baseQuery, dispatchFn) => {
           body: JSON.stringify(body),
         })
           .then((res) => {
-            console.log(res);
+            // console.log(res);
             return res.json();
           })
           .then((data) => {
@@ -126,7 +126,7 @@ export const buildHooks = (queryArray, baseQuery, dispatchFn) => {
           })
           .catch((err) => {
             setLoading(false);
-            console.log(err);
+            // console.log(err);
             setError(err);
           });
       }, []);

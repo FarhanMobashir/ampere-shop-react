@@ -1,17 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { RoundImageCard } from "../components/RoundImageCard";
+import { useApi } from "../contexts/ApiContext";
+import { useData } from "../contexts/DataContext";
 
 export const HomeScreen = () => {
-  const [category, setCategory] = React.useState([]);
-
-  React.useEffect(() => {
-    fetch("/api/categories")
-      .then((res) => res.json())
-      .then((data) => {
-        setCategory(data.categories);
-      });
-  }, []);
+  const { useallCategories } = useApi();
+  const { loading: categoryIsLoading, data: categoryData } = useallCategories();
+  const { dispatch: globalDisptach } = useData();
 
   return (
     <div id="main">
@@ -33,16 +29,24 @@ export const HomeScreen = () => {
       <div className="offer-section">
         <h2 className="h2 tx-center m-20 p-20 black-6">Categories</h2>
         <div className="offer-container">
-          {category.map((item) => {
-            return (
-              <RoundImageCard
-                key={item.id}
-                imageUrl={item.imageUrl}
-                title={item.categoryName.toUpperCase()}
-                onClick={() => console.log("Clicked")}
-              />
-            );
-          })}
+          {!categoryIsLoading &&
+            categoryData &&
+            categoryData.categories.map((item, idx) => {
+              return (
+                <Link
+                  key={item._id}
+                  to="/products"
+                  state={{ categoryIndex: idx }}
+                >
+                  <RoundImageCard
+                    key={item.id}
+                    imageUrl={item.imageUrl}
+                    title={item.categoryName.toUpperCase()}
+                    onClick={() => console.log("Clicked")}
+                  />
+                </Link>
+              );
+            })}
         </div>
       </div>
       <div className="feature-section">

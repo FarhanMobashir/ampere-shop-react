@@ -43,16 +43,15 @@ export const AuthForm = () => {
         }
       });
     } else if (signupValidation(password, confirmPassword, name) === false) {
-      setFromValidationStatus("error");
-      setTimeout(() => {
-        setFromValidationStatus("");
-      }, 1000);
+      // setFromValidationStatus("error");
+      // setTimeout(() => {
+      //   setFromValidationStatus("");
+      // }, 1000);
     }
   }
 
   function logIn(e) {
     e.preventDefault();
-
     axios
       .post("/api/auth/login", { email, password })
       .then((res) => {
@@ -64,10 +63,10 @@ export const AuthForm = () => {
       })
       .catch((err) => {
         console.log("Hello");
-        setFromValidationStatus("error");
-        setTimeout(() => {
-          setFromValidationStatus("");
-        }, 1000);
+        // setFromValidationStatus("error");
+        // setTimeout(() => {
+        //   setFromValidationStatus("");
+        // }, 1000);
       });
   }
 
@@ -80,13 +79,13 @@ export const AuthForm = () => {
 
   return (
     <div id="auth-main-container">
-      {formValidationStatus === "error" && (
+      {/* {formValidationStatus === "error" && (
         <Toast
           type="info"
           title="Please fill correctly"
           message="Check the filled field once again"
         />
-      )}
+      )} */}
 
       <div className="page-title-wrapper tx-center mv-20">
         <h1 className="h5 black-6">Login | Signup</h1>
