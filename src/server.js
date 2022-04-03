@@ -62,7 +62,7 @@ export function makeServer({ environment = "development" } = {}) {
       this.post("/auth/login", loginHandler.bind(this));
 
       // products routes (public)
-      this.get("/products", getAllProductsHandler.bind(this));
+      this.get("/products", getAllProductsHandler.bind(this), { timing: 2000 });
       this.get("/products/:productId", getProductHandler.bind(this));
 
       // categories routes (public)
@@ -70,17 +70,26 @@ export function makeServer({ environment = "development" } = {}) {
       this.get("/categories/:categoryId", getCategoryHandler.bind(this));
 
       // cart routes (private)
-      this.get("/user/cart", getCartItemsHandler.bind(this));
-      this.post("/user/cart", addItemToCartHandler.bind(this));
-      this.post("/user/cart/:productId", updateCartItemHandler.bind(this));
+      this.get("/user/cart", getCartItemsHandler.bind(this), { timing: 2000 });
+      this.post("/user/cart", addItemToCartHandler.bind(this), {
+        timing: 1000,
+      });
+      this.post("/user/cart/:productId", updateCartItemHandler.bind(this), {
+        timing: 1000,
+      });
       this.delete(
         "/user/cart/:productId",
-        removeItemFromCartHandler.bind(this)
+        removeItemFromCartHandler.bind(this),
+        { timing: 1000 }
       );
 
       // wishlist routes (private)
-      this.get("/user/wishlist", getWishlistItemsHandler.bind(this));
-      this.post("/user/wishlist", addItemToWishlistHandler.bind(this));
+      this.get("/user/wishlist", getWishlistItemsHandler.bind(this), {
+        timing: 2000,
+      });
+      this.post("/user/wishlist", addItemToWishlistHandler.bind(this), {
+        timing: 1000,
+      });
       this.delete(
         "/user/wishlist/:productId",
         removeItemFromWishlistHandler.bind(this)

@@ -1,14 +1,19 @@
 import { AuthContext } from "../contexts/AuthContex";
 import React from "react";
+import emptyImage from "../assets/shoppingcart.png";
+import { EmptyState } from "./EmptyState";
 
 export const ActiveUser = () => {
   const { logout } = React.useContext(AuthContext);
   return (
-    <div>
-      <h1>User is active</h1>
-      <button className="btn btn-primary" onClick={() => logout()}>
-        LOGOUT
-      </button>
+    <div className="m-20 ">
+      <EmptyState
+        imageUrl={emptyImage}
+        title="Hii there"
+        description="We will love if you stay and shop"
+        buttonText="Logout"
+        onButtonClick={() => logout()}
+      />
     </div>
   );
 };

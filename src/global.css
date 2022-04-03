@@ -398,15 +398,14 @@
 .product-listing-container {
   padding: 1% 2%;
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   flex-wrap: wrap;
   gap: 2rem;
 }
 
 @media (max-width: 600px) {
   .product-listing-container {
-    /* flex-direction: column; */
-    justify-content: space-evenly;
+    margin: 0 20px;
   }
   #product-screen-container {
     flex-direction: column;
@@ -453,7 +452,101 @@
   }
 }
 
- /* extra css */
+/* empty state css */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  gap: 5px;
+  border: 2px dashed var(--black-100);
+  border-radius: 1rem;
+}
+
+.empty-state-image {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+.empty-state-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* skeleton css */
+.skeleton-container {
+  border-radius: 1rem;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.skeleton-circle {
+  padding: 5rem;
+  background-color: var(--black-100);
+  border-radius: 50%;
+}
+
+.skeleton-item-image {
+  padding: 1rem;
+  background-color: var(--black-000);
+  height: 20rem;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-item-button {
+  padding: 1rem;
+  /* background-color: var(--black-000); */
+  height: 5rem;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton {
+  animation: skeleton-loading 1s linear infinite alternate;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: var(--black-100);
+  }
+  100% {
+    background-color: var(--black-000);
+  }
+}
+
+/* toast positions */
+.top-right {
+  position: fixed;
+  top: 12vh;
+  right: 4vh;
+  z-index: 999;
+}
+
+@media (max-width: 400px) {
+  .bottom-center {
+    position: fixed;
+    top: auto;
+    bottom: 4vh;
+    left: 10vh;
+    right: 10vh;
+    z-index: 999;
+  }
+}
+
+/* modal */
+
+.modal {
+  background-color: black;
+  opacity: 0.1;
+}
+
+/* extra css */
 .pointer {
   cursor: pointer;
 }

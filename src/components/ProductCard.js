@@ -13,10 +13,9 @@ export const ProductCard = ({
   onIconClick,
   cardWithDismiss,
   actionButtonText,
-  isWishlisted,
   isLoading,
+  isWishlishted,
 }) => {
-  const [activeWishlist, setActiveWishlist] = React.useState(false);
   return (
     <div className="card-container-small">
       <div className="card-img-grid">
@@ -34,9 +33,9 @@ export const ProductCard = ({
         ) : (
           <i
             onClick={onIconClick}
-            className={`uil uil-heart card-icon-small icon-on-image pointer ${
-              isWishlisted ? "red-5" : ""
-            }`}
+            className={`uil uil-heart card-icon-small icon-on-image pointer
+            ${isWishlishted ? "red" : ""}
+            `}
           ></i>
         )}
       </div>
@@ -60,6 +59,7 @@ export const ProductCard = ({
         <button
           onClick={onActionButtonClick}
           className="btn btn-primary wp-100"
+          disabled={isLoading}
         >
           {actionButtonText}
         </button>

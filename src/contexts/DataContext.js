@@ -8,6 +8,7 @@ const initialState = {
   cart: [],
   categories: [],
   wishlist: [],
+  activeCategories: [],
 };
 
 const reducer = produce((state = initialState, action) => {
@@ -19,7 +20,23 @@ const reducer = produce((state = initialState, action) => {
   // * categories actions
   if (action.type === "allCategories") {
     state.categories = action.payload.categories;
+    state.activeCategories = new Array(action.payload.categories.length).fill(
+      false
+    );
   }
+
+  // ? set active category for ui
+  if (action.type === "setActiveCategory") {
+    state.activeCategories[action.payload] =
+      !state.activeCategories[action.payload];
+  }
+
+  if (action.type === "clearActiveCategory") {
+    state.activeCategories = new Array(state.activeCategories.length).fill(
+      false
+    );
+  }
+
   // * wishlist actions
   if (action.type === "getWishlist") {
     state.wishlist = action.payload.wishlist;
@@ -47,6 +64,11 @@ const reducer = produce((state = initialState, action) => {
   if (action.type === "updateCart") {
     state.cart = action.payload.cart;
   }
+
+  // * clear state
+  if (action.type === "clearState") {
+    return initialState;
+  }
 }, initialState);
 
 export const DataContext = React.createContext();
@@ -54,7 +76,6 @@ DataContext.displayName = "DataContext";
 
 export const DataProvider = ({ children }) => {
   const [state, dispatch] = useThunkReducer(reducer, initialState);
-
   return (
     <DataContext.Provider value={{ state, dispatch }}>
       {children}

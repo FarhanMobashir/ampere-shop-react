@@ -6,6 +6,7 @@ export const CartCard = ({
   cutoutPrice,
   rating,
   imageUrl,
+  moveToWishlistText,
   productCount,
   onIncrement,
   onDecrement,
@@ -40,7 +41,7 @@ export const CartCard = ({
         </div>
         <div class="bottom-container">
           <button class="btn btn-text btn-sm" onClick={onMoveToWishlist}>
-            MOVE TO WISHLIST
+            {moveToWishlistText}
           </button>
           <button class="btn btn-text btn-sm" onClick={onRemove}>
             REMOVE

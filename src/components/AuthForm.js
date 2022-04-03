@@ -5,62 +5,13 @@ import axios from "axios";
 import { AuthContext } from "../contexts/AuthContex";
 import { useToggle } from "../hooks/useToggle";
 import { useNavigate } from "react-router-dom";
+import { Toast } from "./Toast";
 
-export const Form = ({ onSubmit, name }) => {
-  return (
-    <div className="login-signup-card">
-      <div className="tabs-container">
-        <h1
-          className={`tabs tx-center pointer`}
-          onClick={() => console.log("Login clicked")}
-        >
-          LOGIN
-        </h1>
-        <h1
-          className={`tabs tx-center pointer tabs-active`}
-          onClick={() => console.log("Signup clicked")}
-        >
-          SIGN UP
-        </h1>
-      </div>
-      <form action="" className="auth-form" onSubmit={submitFormHandler}>
-        <Input
-          label="Email"
-          required={true}
-          type="email"
-          htmlFor="email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <Input
-          label="Password"
-          required={true}
-          type="password"
-          htmlFor="password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <div className="flex-between-container">
-          <Checkbox
-            label="Remember me"
-            value="remember-me"
-            name="remember-me"
-            onChange={(e) => setRememberMe(e.target.checked)}
-          />
-          <p className="tx-18 tx-underline blue-4 pointer">Forgot password</p>
-        </div>
-        <div className="flex-between-container">
-          <button type="submit" className="btn btn-primary btn-md mt-20 wp-100">
-            SIGN UP
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-};
-
-export const AuthForm = ({}) => {
+export const AuthForm = () => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [formValidationStatus, setFromValidationStatus] = React.useState("");
   const [name, setName] = React.useState("");
   const onLogin = useToggle(false);
   const navigate = useNavigate();
@@ -72,20 +23,51 @@ export const AuthForm = ({}) => {
     password: "adarshbalika",
   };
 
+  function signupValidation(password, confirmPassword, name) {
+    if (name.length >= 3 && password === confirmPassword) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   function signUp(e) {
     e.preventDefault();
-    axios.post("/api/auth/signup", { email, password }).then((res) => {
-      login(res.data.encodedToken);
-    });
-    navigate("/");
+
+    if (signupValidation(password, confirmPassword, name) === true) {
+      axios.post("/api/auth/signup", { email, password, name }).then((res) => {
+        setFromValidationStatus("success");
+        login(res.data.encodedToken);
+        if (res.data.encodedToken) {
+          navigate("/");
+        }
+      });
+    } else if (signupValidation(password, confirmPassword, name) === false) {
+      // setFromValidationStatus("error");
+      // setTimeout(() => {
+      //   setFromValidationStatus("");
+      // }, 1000);
+    }
   }
 
   function logIn(e) {
     e.preventDefault();
-    axios.post("/api/auth/login", { email, password }).then((res) => {
-      login(res.data.encodedToken);
-      navigate("/");
-    });
+    axios
+      .post("/api/auth/login", { email, password })
+      .then((res) => {
+        login(res.data.encodedToken);
+        if (res.data.encodedToken) {
+          navigate("/");
+        }
+        navigate("/");
+      })
+      .catch((err) => {
+        console.log("Hello");
+        // setFromValidationStatus("error");
+        // setTimeout(() => {
+        //   setFromValidationStatus("");
+        // }, 1000);
+      });
   }
 
   function guestLogin(e) {
@@ -97,6 +79,14 @@ export const AuthForm = ({}) => {
 
   return (
     <div id="auth-main-container">
+      {/* {formValidationStatus === "error" && (
+        <Toast
+          type="info"
+          title="Please fill correctly"
+          message="Check the filled field once again"
+        />
+      )} */}
+
       <div className="page-title-wrapper tx-center mv-20">
         <h1 className="h5 black-6">Login | Signup</h1>
       </div>

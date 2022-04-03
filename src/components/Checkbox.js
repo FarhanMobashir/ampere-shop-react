@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Checkbox = ({ label, value, name, onChange }) => {
+export const Checkbox = ({ label, value, name, onChange, checked }) => {
   return (
     <label className="radio-checkbox-label" htmlFor={value}>
       <input
@@ -9,6 +9,7 @@ export const Checkbox = ({ label, value, name, onChange }) => {
         id={value}
         value={value}
         onChange={onChange}
+        checked={checked}
       />
       {label}
     </label>
