@@ -83,10 +83,10 @@ export const CartScreen = () => {
               return (
                 <CartCard
                   key={item._id}
-                  productName={item.name}
+                  productName={`${item.name.slice(0, 20)}...`}
                   categoryName={item.categoryName}
-                  price={item.price}
-                  cutoutPrice="$499.00"
+                  price={`$${item.price}`}
+                  cutoutPrice=""
                   rating={item.rating}
                   imageUrl={item.imageUrl}
                   productCount={item.qty}
