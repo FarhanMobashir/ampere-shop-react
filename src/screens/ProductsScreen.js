@@ -238,11 +238,7 @@ export const ProductsScreen = () => {
       </form>
 
       <div className="product-listing-wrapper">
-        <div className="active-filter-container">
-          {/* {globalState.filters.map((item) => {
-            return <Pill label={item} onClick={() => console.log("clicked")} />;
-          })} */}
-        </div>
+        <div className="active-filter-container"></div>
         <div className="product-listing-container">
           {productIsLoading && <ProductLoader />}
           {productData &&
@@ -254,8 +250,8 @@ export const ProductsScreen = () => {
                   key={item._id}
                   productName={item.name}
                   categoryName={item.categoryName.toUpperCase()}
-                  price={`₹ ${item.price}`}
-                  cutoutPrice={`₹ ${
+                  price={`$ ${item.price}`}
+                  cutoutPrice={`$ ${
                     Number(item.price) - Number(item.discountPercent)
                   }`}
                   rating={item.rating}

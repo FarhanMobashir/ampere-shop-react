@@ -43,23 +43,7 @@ export const AppHeader = () => {
               </CustomedNavLink>
             </h1>
           </div>
-          <div className="navigation-link-container">
-            <CustomedNavLink to="/">
-              <h4 className="navigation-link" to="#">
-                MEN
-              </h4>
-            </CustomedNavLink>
-            <CustomedNavLink to="/">
-              <h4 className="navigation-link" to="#">
-                WOMEN
-              </h4>
-            </CustomedNavLink>
-            <CustomedNavLink to="/">
-              <h4 className="navigation-link" to="#">
-                KIDS
-              </h4>
-            </CustomedNavLink>
-          </div>
+
           <HeaderSearch size="big" />
           <div className="nav-icon-container">
             <CustomedNavLink to="/user/cart">

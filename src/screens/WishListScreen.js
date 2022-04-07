@@ -63,14 +63,16 @@ export const WishlistScreen = () => {
             return (
               <ProductCard
                 key={item._id}
-                productName="Product Name Goes Here"
-                categoryName="Category Name"
-                price="$100"
-                cutoutPrice="$190"
-                rating="4.5"
-                imageUrl="https://i.ibb.co/gP3rQtr/jeans-1.png"
-                discountPillText="20% off"
-                offerPillText="New"
+                productName={item.name}
+                categoryName={item.categoryName.toUpperCase()}
+                price={`₹ ${item.price}`}
+                cutoutPrice={`₹ ${
+                  Number(item.price) - Number(item.discountPercent)
+                }`}
+                rating={item.rating}
+                imageUrl={item.imageUrl}
+                discountPillText={`${item.discountPercent}%`}
+                offerPillText={item.tag}
                 onActionButtonClick={() => actionButtonClickHandler(item)}
                 onIconClick={() => deleteFromWishlist(item, item._id)}
                 actionButtonText={showActionButtonText(item)}
