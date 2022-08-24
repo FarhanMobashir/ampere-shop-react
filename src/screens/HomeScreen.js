@@ -35,6 +35,7 @@ export const HomeScreen = () => {
               return (
                 <Link
                   key={item._id}
+                  style={{ textDecoration: "none" }}
                   to="/products"
                   state={{ categoryIndex: idx }}
                 >

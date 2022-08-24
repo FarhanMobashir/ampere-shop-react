@@ -247,6 +247,7 @@ export const ProductsScreen = () => {
             filteredData.map((item) => {
               return (
                 <ProductCard
+                  onImageClick={() => navigate(`/products/${item._id}`)}
                   key={item._id}
                   productName={item.name}
                   categoryName={item.categoryName.toUpperCase()}

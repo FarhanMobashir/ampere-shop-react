@@ -12,6 +12,7 @@ import { ApiProvider } from "./contexts/ApiContext";
 import { DataProvider } from "./contexts/DataContext";
 import { EmptyState } from "./components/EmptyState";
 import errorImage from "./assets/sleep.png";
+import { SingleProduct } from "./components/SingleProduct";
 function App() {
   const navigate = useNavigate();
   return (
@@ -38,6 +39,7 @@ function App() {
               <Route path="/mock" element={<Mockman />} />
               <Route path="/auth" element={<AuthScreen />} />
               <Route path="/products" element={<ProductsScreen />} />
+              <Route path="/products/:productId" element={<SingleProduct />} />
 
               {/* private routes  */}
               <Route path="/user">

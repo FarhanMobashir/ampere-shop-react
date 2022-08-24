@@ -15,11 +15,13 @@ export const ProductCard = ({
   actionButtonText,
   isLoading,
   isWishlishted,
+  onImageClick,
 }) => {
   return (
     <div className="card-container-small">
       <div className="card-img-grid">
         <img
+          onClick={onImageClick}
           className="card-img img-with-icon"
           //   src="https://i.ibb.co/gP3rQtr/jeans-1.png"
           src={imageUrl}

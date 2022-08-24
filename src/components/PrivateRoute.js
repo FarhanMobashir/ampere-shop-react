@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate, useLocation, Route } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContex";
 
 export const PrivateRoute = ({ children }) => {
@@ -7,8 +7,7 @@ export const PrivateRoute = ({ children }) => {
   let location = useLocation();
 
   if (!isAuthenticated()) {
-    console.log("isAuthenticated: ", isAuthenticated());
-    return <Navigate to="/auth" state={{ from: location }} />;
+    return <Navigate to="/auth" state={{ from: location }} replace />;
   } else {
     return children;
   }

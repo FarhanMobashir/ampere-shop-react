@@ -4,7 +4,7 @@ import React from "react";
 import axios from "axios";
 import { AuthContext } from "../contexts/AuthContex";
 import { useToggle } from "../hooks/useToggle";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Toast } from "./Toast";
 
 export const AuthForm = () => {
@@ -15,6 +15,9 @@ export const AuthForm = () => {
   const [name, setName] = React.useState("");
   const onLogin = useToggle(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  // Get redirect location or provide fallback
+  let from = location.state?.from?.pathname || "/";
 
   const { login } = React.useContext(AuthContext);
 
@@ -39,7 +42,7 @@ export const AuthForm = () => {
         setFromValidationStatus("success");
         login(res.data.encodedToken);
         if (res.data.encodedToken) {
-          navigate("/");
+          navigate(from, { replace: true });
         }
       });
     } else if (signupValidation(password, confirmPassword, name) === false) {
@@ -57,7 +60,7 @@ export const AuthForm = () => {
       .then((res) => {
         login(res.data.encodedToken);
         if (res.data.encodedToken) {
-          navigate("/");
+          navigate(from, { replace: true });
         }
         navigate("/");
       })
@@ -73,7 +76,8 @@ export const AuthForm = () => {
   function guestLogin(e) {
     axios.post("/api/auth/login", guestLoginCredential).then((res) => {
       login(res.data.encodedToken);
-      navigate("/");
+      console.log("Guest Login");
+      navigate(from, { replace: true });
     });
   }
 
